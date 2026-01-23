@@ -2,7 +2,13 @@
     "name": "logs-opacity",
     "displayName": "logs-opacity",
     "description": "VScode extension for logs opacity.",
+    "publisher": "Némo Cazin",
     "version": "0.0.1",
+    "icon": "assets/icon.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nemocazin/logs-opacity"
+    },
     "engines": {
         "vscode": "^1.108.1"
     },
@@ -36,8 +42,9 @@
     "scripts": {
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
-        "clean": "rm -rf ./dist",
+        "clean": "rm -rf ./dist ./coverage",
         "test": "vitest run",
+        "coverage": "vitest run --coverage",
         "vscode:prepublish": "npm run compile",
         "vscode:package": "vsce package"
     },
@@ -45,6 +52,7 @@
         "@types/mocha": "^10.0.10",
         "@types/node": "^22.19.7",
         "@types/vscode": "^1.108.1",
+        "@vitest/coverage-v8": "^4.0.18",
         "@vscode/test-cli": "^0.0.12",
         "@vscode/test-electron": "^2.5.2",
         "esbuild": "^0.27.2",
