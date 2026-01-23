@@ -7,7 +7,16 @@
         "lib": ["ES2020"],
         "sourceMap": true,
         "rootDir": "src",
-        "strict": true
+        "strict": true,
+        "noUncheckedIndexedAccess": true,
+        "noImplicitOverride": true,
+        "strictNullChecks": true,
+        "useUnknownInCatchVariables": true,
+        "strictFunctionTypes": true,
+        "noImplicitAny": true,
+        "strictPropertyInitialization": true,
+        "noFallthroughCasesInSwitch": true,
+        "erasableSyntaxOnly": true
     },
     "exclude": ["node_modules", ".vscode-test", "eslint.config.ts", "dist", "vitest.config.ts"]
 }
