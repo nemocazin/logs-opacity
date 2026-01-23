@@ -8,5 +8,5 @@
         "rootDir": "src",
         "strict": true
     },
-    "exclude": ["node_modules", ".vscode-test", "eslint.config.ts"]
+    "exclude": ["node_modules", ".vscode-test", "eslint.config.ts", "dist", "vitest.config.ts"]
 }
