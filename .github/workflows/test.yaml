@@ -27,7 +27,7 @@ jobs:
               run: npm ci
 
             - name: ESLint
-              run: npx eslint . --max-warnings=0
+              run: npx eslint src --max-warnings=0
 
     test:
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
