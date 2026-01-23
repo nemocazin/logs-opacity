@@ -14,7 +14,7 @@ export default defineConfig([
                 'error',
                 {
                     selector: 'ThrowStatement',
-                    message: 'Throwing literals is not allowed.',
+                    message: 'Throwing not allowed.',
                 },
             ],
             'no-var': 'error',
