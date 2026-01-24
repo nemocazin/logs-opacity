@@ -17,6 +17,7 @@ vi.mock('../../utils/converter');
 describe('Decoration Manager Tests', () => {
     let mockDecoration: vscode.TextEditorDecorationType;
     let getOpacityFromConfigMock: ReturnType<typeof vi.fn>;
+    let getColorFromConfigMock: ReturnType<typeof vi.fn>;
     let convertOpacityToHexMock: ReturnType<typeof vi.fn>;
     let createTextEditorDecorationTypeMock: ReturnType<typeof vi.fn>;
 
@@ -29,6 +30,7 @@ describe('Decoration Manager Tests', () => {
 
         // Setup mocks with proper typing
         getOpacityFromConfigMock = vi.mocked(configManager.getOpacityFromConfig);
+        getColorFromConfigMock = vi.mocked(configManager.getColorFromConfig);
         convertOpacityToHexMock = vi.mocked(converter.convertOpacityToHex);
         createTextEditorDecorationTypeMock = vi.mocked(vscode.window.createTextEditorDecorationType);
 
@@ -43,6 +45,7 @@ describe('Decoration Manager Tests', () => {
     describe('createDecoration', () => {
         it('should create decoration with opacity styling when opacity is less than 100', () => {
             getOpacityFromConfigMock.mockReturnValue(50);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('80');
 
             createDecoration();
@@ -55,18 +58,21 @@ describe('Decoration Manager Tests', () => {
             });
         });
 
-        it('should create empty decoration when opacity is 100%', () => {
+        it('should create empty decoration when opacity is 100% and color selected', () => {
             getOpacityFromConfigMock.mockReturnValue(100);
+            getColorFromConfigMock.mockReturnValue('#808080');
 
             createDecoration();
 
             expect(getOpacityFromConfigMock).toHaveBeenCalledTimes(1);
+            expect(getColorFromConfigMock).toHaveBeenCalledTimes(1);
             expect(convertOpacityToHexMock).not.toHaveBeenCalled();
             expect(createTextEditorDecorationTypeMock).toHaveBeenCalledWith({});
         });
 
         it('should create decoration with correct alpha hex for minimum opacity (0)', () => {
             getOpacityFromConfigMock.mockReturnValue(0);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('00');
 
             createDecoration();
@@ -80,6 +86,7 @@ describe('Decoration Manager Tests', () => {
 
         it('should create decoration with correct alpha hex for mid-range opacity', () => {
             getOpacityFromConfigMock.mockReturnValue(75);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('BF');
 
             createDecoration();
@@ -93,6 +100,7 @@ describe('Decoration Manager Tests', () => {
 
         it('should use gray color (#808080) for log decoration', () => {
             getOpacityFromConfigMock.mockReturnValue(60);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('99');
 
             createDecoration();
@@ -105,6 +113,7 @@ describe('Decoration Manager Tests', () => {
 
         it('should set italic font style for non-100% opacity', () => {
             getOpacityFromConfigMock.mockReturnValue(50);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('80');
 
             createDecoration();
@@ -117,11 +126,11 @@ describe('Decoration Manager Tests', () => {
 
         it('should update the global logDecoration variable', () => {
             getOpacityFromConfigMock.mockReturnValue(50);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('80');
 
             createDecoration();
 
-            // The logDecoration should be set to the mock decoration
             expect(logDecoration).toBe(mockDecoration);
         });
     });
@@ -130,7 +139,9 @@ describe('Decoration Manager Tests', () => {
         it('should dispose existing decoration', () => {
             // First create a decoration
             getOpacityFromConfigMock.mockReturnValue(50);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('80');
+
             createDecoration();
 
             // Then dispose it
@@ -145,7 +156,9 @@ describe('Decoration Manager Tests', () => {
 
         it('should not throw error if dispose is called multiple times', () => {
             getOpacityFromConfigMock.mockReturnValue(50);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('80');
+
             createDecoration();
 
             expect(() => {
@@ -160,7 +173,9 @@ describe('Decoration Manager Tests', () => {
         it('should dispose old decoration and create new one', () => {
             // Create initial decoration
             getOpacityFromConfigMock.mockReturnValue(50);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('80');
+
             createDecoration();
 
             const firstDecoration = mockDecoration;
@@ -174,6 +189,7 @@ describe('Decoration Manager Tests', () => {
 
             // Change opacity
             getOpacityFromConfigMock.mockReturnValue(75);
+            getColorFromConfigMock.mockReturnValue('#FFFFFF');
             convertOpacityToHexMock.mockReturnValue('BF');
 
             recreateDecoration();
@@ -186,6 +202,7 @@ describe('Decoration Manager Tests', () => {
         it('should create decoration with updated opacity settings', () => {
             // Initial creation with 50% opacity
             getOpacityFromConfigMock.mockReturnValue(50);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('80');
             createDecoration();
 
@@ -199,10 +216,12 @@ describe('Decoration Manager Tests', () => {
 
         it('should handle recreation from opacity to 100%', () => {
             getOpacityFromConfigMock.mockReturnValue(60);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('99');
             createDecoration();
 
             getOpacityFromConfigMock.mockReturnValue(100);
+            getColorFromConfigMock.mockReturnValue('#FFFFFF');
             recreateDecoration();
 
             expect(mockDecoration.dispose).toHaveBeenCalledTimes(1);
@@ -211,9 +230,11 @@ describe('Decoration Manager Tests', () => {
 
         it('should handle recreation from 100% to opacity', () => {
             getOpacityFromConfigMock.mockReturnValue(100);
+            getColorFromConfigMock.mockReturnValue('#FFFFFF');
             createDecoration();
 
             getOpacityFromConfigMock.mockReturnValue(60);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('99');
             recreateDecoration();
 
@@ -230,6 +251,7 @@ describe('Decoration Manager Tests', () => {
 
             opacities.forEach((opacity, index) => {
                 getOpacityFromConfigMock.mockReturnValue(opacity);
+                getColorFromConfigMock.mockReturnValue('#808080');
                 convertOpacityToHexMock.mockReturnValue(hexValues[index]);
 
                 if (index === 0) {
@@ -248,6 +270,7 @@ describe('Decoration Manager Tests', () => {
         it('should properly handle the full lifecycle: create -> recreate -> dispose', () => {
             // Create
             getOpacityFromConfigMock.mockReturnValue(50);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('80');
             createDecoration();
 
@@ -255,6 +278,7 @@ describe('Decoration Manager Tests', () => {
 
             // Recreate
             getOpacityFromConfigMock.mockReturnValue(75);
+            getColorFromConfigMock.mockReturnValue('#FFFFFF');
             convertOpacityToHexMock.mockReturnValue('BF');
             recreateDecoration();
 
@@ -270,15 +294,18 @@ describe('Decoration Manager Tests', () => {
         it('should maintain correct decoration state through multiple changes', () => {
             // Start with 50%
             getOpacityFromConfigMock.mockReturnValue(50);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('80');
             createDecoration();
 
             // Change to 100%
             getOpacityFromConfigMock.mockReturnValue(100);
+            getColorFromConfigMock.mockReturnValue('#FFFFFF');
             recreateDecoration();
 
             // Change back to 50%
             getOpacityFromConfigMock.mockReturnValue(50);
+            getColorFromConfigMock.mockReturnValue('#808080');
             convertOpacityToHexMock.mockReturnValue('80');
             recreateDecoration();
 

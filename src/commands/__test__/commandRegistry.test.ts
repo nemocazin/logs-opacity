@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as vscode from 'vscode';
 import { registerCommands } from '../commandRegistry';
 import * as changeOpacityCommand from '../changeOpacityCommand';
+import * as changeColorCommand from '../changeColorCommand';
 
 // Mock vscode module
 vi.mock('vscode', () => ({
@@ -13,6 +14,11 @@ vi.mock('vscode', () => ({
 // Mock changeOpacityCommand module
 vi.mock('../changeOpacityCommand', () => ({
     handleChangeOpacityCommand: vi.fn(),
+}));
+
+// Mock changeColorCommand module
+vi.mock('../changeColorCommand', () => ({
+    handleChangeColorCommand: vi.fn(),
 }));
 
 describe('commandRegistry', () => {
@@ -52,10 +58,19 @@ describe('commandRegistry', () => {
             );
         });
 
-        it('should register command exactly once', () => {
+        it('should register change color command', () => {
             registerCommands(mockContext);
 
-            expect(registerCommandMock).toHaveBeenCalledTimes(1);
+            expect(registerCommandMock).toHaveBeenCalledWith(
+                'unobtrusive-logs.changeColor',
+                changeColorCommand.handleChangeColorCommand,
+            );
+        });
+
+        it('should register command twice', () => {
+            registerCommands(mockContext);
+
+            expect(registerCommandMock).toHaveBeenCalledTimes(2);
         });
 
         it('should add command to context subscriptions', () => {
@@ -67,7 +82,7 @@ describe('commandRegistry', () => {
         it('should add exactly one subscription to context', () => {
             registerCommands(mockContext);
 
-            expect(mockContext.subscriptions.length).toBe(1);
+            expect(mockContext.subscriptions.length).toBe(2);
         });
 
         it('should use correct command identifier', () => {
@@ -98,8 +113,8 @@ describe('commandRegistry', () => {
             registerCommands(mockContext);
             registerCommands(mockContext);
 
-            expect(registerCommandMock).toHaveBeenCalledTimes(2);
-            expect(mockContext.subscriptions.length).toBe(2);
+            expect(registerCommandMock).toHaveBeenCalledTimes(4);
+            expect(mockContext.subscriptions.length).toBe(4);
         });
 
         it('should preserve existing subscriptions', () => {
@@ -108,7 +123,7 @@ describe('commandRegistry', () => {
 
             registerCommands(mockContext);
 
-            expect(mockContext.subscriptions.length).toBe(2);
+            expect(mockContext.subscriptions.length).toBe(3);
             expect(mockContext.subscriptions).toContain(existingDisposable);
             expect(mockContext.subscriptions).toContain(mockDisposable);
         });
@@ -129,7 +144,7 @@ describe('commandRegistry', () => {
 
             registerCommands(mockContext);
 
-            expect(callOrder).toEqual(['register', 'subscribe']);
+            expect(callOrder).toEqual(['register', 'register', 'subscribe', 'subscribe']);
         });
 
         it('should work with empty context subscriptions', () => {
@@ -137,7 +152,7 @@ describe('commandRegistry', () => {
 
             registerCommands(mockContext);
 
-            expect(mockContext.subscriptions.length).toBe(1);
+            expect(mockContext.subscriptions.length).toBe(2);
             expect(mockContext.subscriptions[0]).toBe(mockDisposable);
         });
 
@@ -146,9 +161,7 @@ describe('commandRegistry', () => {
 
             expect(result).toBeUndefined();
         });
-    });
 
-    describe('command registration integration', () => {
         it('should register command that can be disposed', () => {
             registerCommands(mockContext);
 
