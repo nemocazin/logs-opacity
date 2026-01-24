@@ -1,6 +1,26 @@
 import * as vscode from 'vscode';
 
 /**
+ * Retrieves the color setting from the configuration.
+ *
+ * @returns The color value.
+ */
+export function getColorFromConfig(): string {
+    const config = vscode.workspace.getConfiguration('logsOpacity');
+    return config.get<string>('color', '#808080');
+}
+
+/**
+ * Safves the color setting to the configuration.
+ *
+ * @param color The color value to save.
+ */
+export async function saveColorToConfig(color: string): Promise<void> {
+    const config = vscode.workspace.getConfiguration('logsOpacity');
+    await config.update('color', color, vscode.ConfigurationTarget.Global);
+}
+
+/**
  * Retrieves the opacity setting from the configuration.
  *
  * @returns The opacity value between 0 and 100.

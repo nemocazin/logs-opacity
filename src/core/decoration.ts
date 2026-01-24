@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { getOpacityFromConfig } from '../config/configManager';
+import { getOpacityFromConfig, getColorFromConfig } from '../config/configManager';
 import { convertOpacityToHex } from '../utils/converter';
 
 export let logDecoration: vscode.TextEditorDecorationType;
@@ -9,6 +9,7 @@ export let logDecoration: vscode.TextEditorDecorationType;
  */
 export function createDecoration(): void {
     const opacity: number = getOpacityFromConfig();
+    const color: string = getColorFromConfig();
 
     // Opacity 100% means no change, so use default styling
     if (opacity === 100) {
@@ -19,7 +20,7 @@ export function createDecoration(): void {
     const alphaHex = convertOpacityToHex(opacity);
 
     logDecoration = vscode.window.createTextEditorDecorationType({
-        color: `#808080${alphaHex}`,
+        color: `${color}${alphaHex}`,
         fontStyle: 'italic',
     });
 }

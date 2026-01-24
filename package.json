@@ -23,17 +23,27 @@
             {
                 "command": "unobtrusive-logs.changeOpacity",
                 "title": "Logs: Change Opacity"
+            },
+            {
+                "command": "unobtrusive-logs.changeColor",
+                "title": "Logs: Change Color"
             }
         ],
         "configuration": {
-            "title": "Logs Opacity",
+            "title": "Logs Appearance",
             "properties": {
                 "logsOpacity.opacity": {
                     "type": "number",
                     "default": 50,
                     "minimum": 0,
                     "maximum": 100,
-                    "description": "Opacity level for console.log and log.* statements (0 to 100)"
+                    "description": "Opacity level for logs (0 to 100)."
+                },
+                "logsOpacity.color": {
+                    "type": "string",
+                    "default": "#808080",
+                    "description": "Color used for logs.",
+                    "format": "color"
                 }
             }
         }

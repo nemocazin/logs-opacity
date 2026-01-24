@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { handleChangeOpacityCommand } from './changeOpacityCommand';
+import { handleChangeColorCommand } from './changeColorCommand';
 
 /**
  * Registers all commands for the extension.
@@ -12,5 +13,11 @@ export function registerCommands(context: vscode.ExtensionContext): void {
         handleChangeOpacityCommand,
     );
 
+    const changeColorCommand = vscode.commands.registerCommand(
+        'unobtrusive-logs.changeColor',
+        handleChangeColorCommand,
+    );
+
     context.subscriptions.push(changeOpacityCommand);
+    context.subscriptions.push(changeColorCommand);
 }
