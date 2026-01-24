@@ -30,7 +30,13 @@ describe('logDetector', () => {
         document: MockDocument;
     };
 
-    // Helper function to create a mock editor
+    /**
+     * Creates a mock TextEditor with the given text and language ID.
+     *
+     * @param text text content of the document
+     * @param languageId language identifier
+     * @returns mock TextEditor instance
+     */
     function createMockEditor(text: string, languageId: string): vscode.TextEditor {
         const lines = text.split('\n');
 
@@ -115,7 +121,6 @@ describe('logDetector', () => {
 
             const results = findLogStatements(editor);
 
-            // Should still find console.log using default TypeScript patterns
             expect(results.length).toBeGreaterThan(0);
         });
 
