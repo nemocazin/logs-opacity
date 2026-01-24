@@ -8,7 +8,7 @@ import { handleChangeOpacityCommand } from './changeOpacityCommand';
  */
 export function registerCommands(context: vscode.ExtensionContext): void {
     const changeOpacityCommand = vscode.commands.registerCommand(
-        'logs-opacity.changeOpacity',
+        'unobtrusive-logs.changeOpacity',
         handleChangeOpacityCommand,
     );
 

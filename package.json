@@ -1,13 +1,13 @@
 {
-    "name": "logs-opacity",
-    "displayName": "logs-opacity",
+    "name": "unobtrusive-logs",
+    "displayName": "unobtrusive-logs",
     "description": "VScode extension for logs opacity.",
     "publisher": "Némo Cazin",
     "version": "0.0.1",
     "icon": "assets/icon.png",
     "repository": {
         "type": "git",
-        "url": "https://github.com/nemocazin/logs-opacity"
+        "url": "https://github.com/nemocazin/unobtrusive-logs"
     },
     "engines": {
         "vscode": "^1.108.1"
@@ -21,7 +21,7 @@
     "contributes": {
         "commands": [
             {
-                "command": "logs-opacity.changeOpacity",
+                "command": "unobtrusive-logs.changeOpacity",
                 "title": "Logs: Change Opacity"
             }
         ],

@@ -47,7 +47,7 @@ describe('commandRegistry', () => {
             registerCommands(mockContext);
 
             expect(registerCommandMock).toHaveBeenCalledWith(
-                'logs-opacity.changeOpacity',
+                'unobtrusive-logs.changeOpacity',
                 changeOpacityCommand.handleChangeOpacityCommand,
             );
         });
@@ -77,7 +77,7 @@ describe('commandRegistry', () => {
             expect(calls.length).toBeGreaterThan(0);
             const commandId = calls[0]?.[0];
 
-            expect(commandId).toBe('logs-opacity.changeOpacity');
+            expect(commandId).toBe('unobtrusive-logs.changeOpacity');
         });
 
         it('should pass handleChangeOpacityCommand as callback', () => {
