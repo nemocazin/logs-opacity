@@ -17,8 +17,23 @@ describe('LOG_PATTERNS', () => {
             testPattern(0, 'console.log("test");');
         });
 
-        it('should match console.log without semicolon', () => {
-            testPattern(0, 'console.log("test")');
+        it('should match console.warn statements', () => {
+            testPattern(0, 'console.warn("test");');
+        });
+        it('should match console.error statements', () => {
+            testPattern(0, 'console.error("test");');
+        });
+
+        it('should match console.info statements', () => {
+            testPattern(0, 'console.info("test");');
+        });
+
+        it('should match console.debug statements', () => {
+            testPattern(0, 'console.debug("test");');
+        });
+
+        it('should match console.trace statements', () => {
+            testPattern(0, 'console.trace("test");');
         });
 
         it('should match log.info statements', () => {
