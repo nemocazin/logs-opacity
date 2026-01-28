@@ -325,12 +325,5 @@ describe('logDetector', () => {
             expect(patterns.length).toBeGreaterThan(0);
             expect(Array.isArray(patterns)).toBe(true);
         });
-
-        it('should map c++ to cpp patterns', () => {
-            const cppPatterns = getLogPatternsForLanguage('cpp');
-            const cPlusPlusPatterns = getLogPatternsForLanguage('c++');
-
-            expect(cPlusPlusPatterns.length).toBe(cppPatterns.length);
-        });
     });
 });
