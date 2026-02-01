@@ -54,6 +54,7 @@
         "watch": "tsc -watch -p ./",
         "clean": "rm -rf ./dist ./coverage *.vsix",
         "test": "vitest run",
+        "lint": "npx eslint .",
         "coverage": "vitest run --coverage",
         "vscode:prepublish": "npm run compile",
         "vscode:package": "vsce package"
