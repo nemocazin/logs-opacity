@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as vscode from 'vscode';
 import { registerCommands } from '../commandRegistry';
+import * as changeToggleCommand from '../toggleCommand';
 import * as changeOpacityCommand from '../changeOpacityCommand';
 import * as changeColorCommand from '../changeColorCommand';
 
@@ -9,6 +10,11 @@ vi.mock('vscode', () => ({
     commands: {
         registerCommand: vi.fn(),
     },
+}));
+
+// Mock changeOpacityCommand module
+vi.mock('../toggleCommand', () => ({
+    handleToggleCommand: vi.fn(),
 }));
 
 // Mock changeOpacityCommand module
@@ -49,6 +55,15 @@ describe('commandRegistry', () => {
     });
 
     describe('registerCommands', () => {
+        it('should register toggle command', () => {
+            registerCommands(mockContext);
+
+            expect(registerCommandMock).toHaveBeenCalledWith(
+                'unobtrusive-logs.toggle',
+                changeToggleCommand.handleToggleCommand,
+            );
+        });
+
         it('should register change opacity command', () => {
             registerCommands(mockContext);
 
@@ -70,7 +85,7 @@ describe('commandRegistry', () => {
         it('should register command twice', () => {
             registerCommands(mockContext);
 
-            expect(registerCommandMock).toHaveBeenCalledTimes(2);
+            expect(registerCommandMock).toHaveBeenCalledTimes(3);
         });
 
         it('should add command to context subscriptions', () => {
@@ -79,20 +94,30 @@ describe('commandRegistry', () => {
             expect(mockContext.subscriptions).toContain(mockDisposable);
         });
 
-        it('should add exactly one subscription to context', () => {
-            registerCommands(mockContext);
-
-            expect(mockContext.subscriptions.length).toBe(2);
-        });
-
-        it('should use correct command identifier', () => {
+        it('should use correct commands identifier', () => {
             registerCommands(mockContext);
 
             const calls = registerCommandMock.mock.calls;
             expect(calls.length).toBeGreaterThan(0);
-            const commandId = calls[0]?.[0] as string;
 
-            expect(commandId).toBe('unobtrusive-logs.changeOpacity');
+            const commandId1 = calls[0]?.[0] as string;
+            expect(commandId1).toBe('unobtrusive-logs.toggle');
+
+            const commandId2 = calls[1]?.[0] as string;
+            expect(commandId2).toBe('unobtrusive-logs.changeOpacity');
+
+            const commandId3 = calls[2]?.[0] as string;
+            expect(commandId3).toBe('unobtrusive-logs.changeColor');
+        });
+
+        it('should pass handleToggleCommand as callback', () => {
+            registerCommands(mockContext);
+
+            const calls = registerCommandMock.mock.calls;
+            expect(calls.length).toBeGreaterThan(0);
+            const callback = calls[0]?.[1] as typeof changeToggleCommand.handleToggleCommand;
+
+            expect(callback).toBe(changeToggleCommand.handleToggleCommand);
         });
 
         it('should pass handleChangeOpacityCommand as callback', () => {
@@ -100,9 +125,19 @@ describe('commandRegistry', () => {
 
             const calls = registerCommandMock.mock.calls;
             expect(calls.length).toBeGreaterThan(0);
-            const callback = calls[0]?.[1] as typeof changeOpacityCommand.handleChangeOpacityCommand;
+            const callback = calls[1]?.[1] as typeof changeOpacityCommand.handleChangeOpacityCommand;
 
             expect(callback).toBe(changeOpacityCommand.handleChangeOpacityCommand);
+        });
+
+        it('should pass handleChangeColorCommand as callback', () => {
+            registerCommands(mockContext);
+
+            const calls = registerCommandMock.mock.calls;
+            expect(calls.length).toBeGreaterThan(0);
+            const callback = calls[2]?.[1] as typeof changeColorCommand.handleChangeColorCommand;
+
+            expect(callback).toBe(changeColorCommand.handleChangeColorCommand);
         });
 
         it('should not throw when registering commands', () => {
@@ -113,8 +148,8 @@ describe('commandRegistry', () => {
             registerCommands(mockContext);
             registerCommands(mockContext);
 
-            expect(registerCommandMock).toHaveBeenCalledTimes(4);
-            expect(mockContext.subscriptions.length).toBe(4);
+            expect(registerCommandMock).toHaveBeenCalledTimes(6);
+            expect(mockContext.subscriptions.length).toBe(6);
         });
 
         it('should preserve existing subscriptions', () => {
@@ -123,7 +158,7 @@ describe('commandRegistry', () => {
 
             registerCommands(mockContext);
 
-            expect(mockContext.subscriptions.length).toBe(3);
+            expect(mockContext.subscriptions.length).toBe(4);
             expect(mockContext.subscriptions).toContain(existingDisposable);
             expect(mockContext.subscriptions).toContain(mockDisposable);
         });
@@ -144,7 +179,7 @@ describe('commandRegistry', () => {
 
             registerCommands(mockContext);
 
-            expect(callOrder).toEqual(['register', 'register', 'subscribe', 'subscribe']);
+            expect(callOrder).toEqual(['register', 'register', 'register', 'subscribe', 'subscribe', 'subscribe']);
         });
 
         it('should work with empty context subscriptions', () => {
@@ -152,7 +187,7 @@ describe('commandRegistry', () => {
 
             registerCommands(mockContext);
 
-            expect(mockContext.subscriptions.length).toBe(2);
+            expect(mockContext.subscriptions.length).toBe(3);
             expect(mockContext.subscriptions[0]).toBe(mockDisposable);
         });
 

@@ -22,6 +22,7 @@ The extension is enabled by default when you open VS Code. It will apply the con
 
 ### Commands
 
+- `unobtrusive-logs.toggle`: Toggle On/Off the extension
 - `unobtrusive-logs.changeOpacity`: Change the opacity level of log statements
 - `unobtrusive-logs.changeColor`: Change the color of log statements
 
@@ -29,6 +30,7 @@ The extension is enabled by default when you open VS Code. It will apply the con
 
 You can configure the extension in VS Code settings:
 
+- `unobtrusive-logs.toggle`: Activate or no the extension
 - `unobtrusive-logs.opacity`: Opacity level for logs (0 to 100, default: 50)
 - `unobtrusive-logs.color`: Color used for logs (default: #808080)
 

@@ -21,6 +21,10 @@
     "contributes": {
         "commands": [
             {
+                "command": "unobtrusive-logs.toggle",
+                "title": "Unobtrusive Logs: Toggle On/Off extension"
+            },
+            {
                 "command": "unobtrusive-logs.changeOpacity",
                 "title": "Unobtrusive Logs: Change Opacity"
             },
@@ -32,6 +36,11 @@
         "configuration": {
             "title": "Unobtrusive Logs",
             "properties": {
+                "unobtrusive-logs.toggle": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Toggle visibility of logs."
+                },
                 "unobtrusive-logs.opacity": {
                     "type": "number",
                     "default": 50,

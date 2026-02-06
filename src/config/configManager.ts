@@ -1,6 +1,26 @@
 import * as vscode from 'vscode';
 
 /**
+ * Retrieves the toggle state from the configuration.
+ *
+ * @returns The toggle state (true for on, false for off).
+ */
+export function getToggleFromConfig(): boolean {
+    const config = vscode.workspace.getConfiguration('unobtrusive-logs');
+    return config.get<boolean>('toggle', false);
+}
+
+/**
+ * Saves the toggle state to the configuration.
+ *
+ * @param toggle The toggle state to save (true for on, false for off).
+ */
+export async function saveToggleToConfig(toggle: boolean): Promise<void> {
+    const config = vscode.workspace.getConfiguration('unobtrusive-logs');
+    await config.update('toggle', toggle, vscode.ConfigurationTarget.Global);
+}
+
+/**
  * Retrieves the color setting from the configuration.
  *
  * @returns The color value.

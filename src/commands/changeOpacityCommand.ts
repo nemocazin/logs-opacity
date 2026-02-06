@@ -1,12 +1,16 @@
 import * as vscode from 'vscode';
-import { getOpacityFromConfig, saveOpacityToConfig } from '../config/configManager';
+import { getOpacityFromConfig, getToggleFromConfig, saveOpacityToConfig } from '../config/configManager';
 import { recreateDecoration } from '../core/decoration';
-import { updateAllVisibleEditors } from '../core/decorationUpdater';
 
 /**
  * Handles the command to change the opacity of log statements.
  */
 export async function handleChangeOpacityCommand(): Promise<void> {
+    if (getToggleFromConfig() === false) {
+        vscode.window.showInformationMessage('Please toggle on the extension before changing opacity.');
+        return;
+    }
+
     const currentOpacity = getOpacityFromConfig();
     const input = await promptForOpacity(currentOpacity);
 
@@ -14,7 +18,6 @@ export async function handleChangeOpacityCommand(): Promise<void> {
         const newOpacity = parseFloat(input);
         await saveOpacityToConfig(newOpacity);
         recreateDecoration();
-        updateAllVisibleEditors();
         showOpacityConfirmation(newOpacity);
     }
 }

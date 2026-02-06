@@ -19,6 +19,7 @@ vi.mock('../../core/decoration');
 vi.mock('../../core/decorationUpdater');
 
 describe('changeOpacityCommand', () => {
+    let toggleFromConfigMock: ReturnType<typeof vi.fn>;
     let getOpacityFromConfigMock: ReturnType<typeof vi.fn>;
     let saveOpacityToConfigMock: ReturnType<typeof vi.fn>;
     let recreateDecorationMock: ReturnType<typeof vi.fn>;
@@ -29,6 +30,7 @@ describe('changeOpacityCommand', () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
+        toggleFromConfigMock = vi.mocked(configManager.getToggleFromConfig);
         getOpacityFromConfigMock = vi.mocked(configManager.getOpacityFromConfig);
         saveOpacityToConfigMock = vi.mocked(configManager.saveOpacityToConfig);
         recreateDecorationMock = vi.mocked(decoration.recreateDecoration);
@@ -44,6 +46,7 @@ describe('changeOpacityCommand', () => {
 
     afterEach(() => {
         vi.restoreAllMocks();
+        toggleFromConfigMock.mockReturnValue(true);
     });
 
     describe('validateOpacityInput', () => {
@@ -219,6 +222,14 @@ describe('changeOpacityCommand', () => {
             expect(saveOpacityToConfigMock).toHaveBeenCalledWith(80);
         });
 
+        it('should return if extension is toggle off', async () => {
+            toggleFromConfigMock.mockReturnValue(false);
+
+            await handleChangeOpacityCommand();
+
+            expect(recreateDecorationMock).toHaveBeenCalledTimes(0);
+        });
+
         it('should recreate decoration after saving new opacity', async () => {
             getOpacityFromConfigMock.mockReturnValue(50);
             showInputBoxMock.mockResolvedValue('60');
@@ -226,15 +237,6 @@ describe('changeOpacityCommand', () => {
             await handleChangeOpacityCommand();
 
             expect(recreateDecorationMock).toHaveBeenCalledTimes(1);
-        });
-
-        it('should update all visible editors after changing opacity', async () => {
-            getOpacityFromConfigMock.mockReturnValue(50);
-            showInputBoxMock.mockResolvedValue('70');
-
-            await handleChangeOpacityCommand();
-
-            expect(updateAllVisibleEditorsMock).toHaveBeenCalledTimes(1);
         });
 
         it('should show confirmation message with new opacity value', async () => {
@@ -291,16 +293,13 @@ describe('changeOpacityCommand', () => {
             recreateDecorationMock.mockImplementation(() => {
                 callOrder.push('recreate');
             });
-            updateAllVisibleEditorsMock.mockImplementation(() => {
-                callOrder.push('update');
-            });
             showInformationMessageMock.mockImplementation(() => {
                 callOrder.push('confirm');
             });
 
             await handleChangeOpacityCommand();
 
-            expect(callOrder).toEqual(['save', 'recreate', 'update', 'confirm']);
+            expect(callOrder).toEqual(['save', 'recreate', 'confirm']);
         });
 
         it('should handle opacity value of 0', async () => {

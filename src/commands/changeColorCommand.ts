@@ -1,13 +1,12 @@
 import * as vscode from 'vscode';
-import { saveColorToConfig } from '../config/configManager';
+import { getToggleFromConfig, saveColorToConfig } from '../config/configManager';
 import { recreateDecoration } from '../core/decoration';
-import { updateAllVisibleEditors } from '../core/decorationUpdater';
 
 type ColorOption = {
     label: string;
     description: string;
     hexCode: string;
-}
+};
 
 const COLOR_OPTIONS: ColorOption[] = [
     { label: '⬛ Default', description: '', hexCode: '#808080' },
@@ -46,12 +45,16 @@ const COLOR_OPTIONS: ColorOption[] = [
  * Handles the command to change the color of log statements.
  */
 export async function handleChangeColorCommand(): Promise<void> {
+    if (getToggleFromConfig() === false) {
+        vscode.window.showInformationMessage('Please toggle on the extension before changing color.');
+        return;
+    }
+
     const selectedColor = await promptForColor();
 
     if (selectedColor) {
         await saveColorToConfig(selectedColor);
         recreateDecoration();
-        updateAllVisibleEditors();
         showColorConfirmation(selectedColor);
     }
 }
