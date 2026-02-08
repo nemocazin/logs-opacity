@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { LOG_PATTERNS } from './patterns';
+import { getAllCustomRegexes } from '../config/configManager';
 
 /**
  * Finds log statements in the given text editor based on predefined patterns.
@@ -67,10 +68,14 @@ export function getLogPatternsForLanguage(languageId: string): RegExp[] {
 
     // Get patterns for the language
     const patternKey = languageMap[languageId];
-    const languagePatterns = patternKey ? LOG_PATTERNS[patternKey] : LOG_PATTERNS.typescript;
 
-    // Combine with general patterns
+    // Get all patterns: language-specific, custom regexes for the language, and general patterns
+    const languagePatterns = patternKey ? LOG_PATTERNS[patternKey] : [];
+    const customRegexes = getAllCustomRegexes().filter(regex => regex.language === languageId);
     const generalPatterns = LOG_PATTERNS.general;
 
-    return [...languagePatterns, ...generalPatterns];
+    // Combine all patterns into a single array
+    const allPatterns = [...languagePatterns, ...customRegexes.map(r => new RegExp(r.pattern)), ...generalPatterns];
+
+    return allPatterns;
 }

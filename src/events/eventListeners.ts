@@ -22,7 +22,13 @@ export function registerEventListeners(context: vscode.ExtensionContext): void {
         }),
         // Update decorations when the configuration changes
         vscode.workspace.onDidChangeConfiguration(e => {
-            if (e.affectsConfiguration('unobtrusive-logs.opacity')) {
+            if (
+                e.affectsConfiguration('unobtrusive-logs.opacity') ||
+                e.affectsConfiguration('unobtrusive-logs.color') ||
+                e.affectsConfiguration('unobtrusive-logs.toggle') ||
+                e.affectsConfiguration('unobtrusive-logs.addCustomRegex') ||
+                e.affectsConfiguration('unobtrusive-logs.deleteCustomRegex')
+            ) {
                 recreateDecoration();
                 updateAllVisibleEditors();
             }
