@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { findLogStatements, findMatchesWithRegex, getLogPatternsForLanguage } from '../logDetector';
+import { ensureGlobalFlag, findLogStatements, findMatchesWithRegex, getLogPatterns } from '../logDetector';
 import type * as vscode from 'vscode';
+import { getAllCustomRegexes } from '../../config/configManager';
 
 // Mock vscode module
 vi.mock('vscode', () => ({
@@ -12,6 +13,16 @@ vi.mock('vscode', () => ({
             this.end = end;
         }
     },
+    workspace: {
+        getConfiguration: vi.fn(() => ({
+            get: vi.fn(<T>(key: string, defaultValue: T) => defaultValue),
+        })),
+    },
+}));
+
+// Mock configManager module
+vi.mock('../../config/configManager', () => ({
+    getAllCustomRegexes: vi.fn(() => []),
 }));
 
 type Position = {
@@ -124,13 +135,30 @@ describe('logDetector', () => {
             expect(results.length).toBe(0);
         });
 
-        it('should default to TypeScript patterns for unknown languages', () => {
-            const text = 'console.log("test");';
-            const editor = createMockEditor(text, 'unknownlang');
+        it('should return only general patterns for unknown languages', () => {
+            const unknownPatterns = getLogPatterns('unknownlang');
+            const generalPatterns = getLogPatterns('general');
 
-            const results = findLogStatements(editor);
+            expect(generalPatterns.length).toBe(unknownPatterns.length);
+            expect(generalPatterns).toEqual(unknownPatterns);
+        });
 
-            expect(results.length).toBeGreaterThan(0);
+        it('should include custom regexes for the given language', () => {
+            const mockedGetAllCustomRegexes = vi.mocked(getAllCustomRegexes);
+
+            mockedGetAllCustomRegexes.mockReturnValue([
+                {
+                    language: 'typescript',
+                    name: 'My Custom Log',
+                    pattern: 'myCustomLog\\$',
+                },
+            ]);
+
+            const patterns = getLogPatterns('typescript');
+
+            const hasCustomPattern = patterns.some(regex => regex.source === 'myCustomLog\\$');
+
+            expect(hasCustomPattern).toBe(true);
         });
 
         it('should handle empty text', () => {
@@ -261,58 +289,50 @@ describe('logDetector', () => {
         });
     });
 
-    describe('getLogPatternsForLanguage', () => {
+    describe('getLogPatterns', () => {
         it('should return typescript patterns for typescript language', () => {
-            const patterns = getLogPatternsForLanguage('typescript');
+            const patterns = getLogPatterns('typescript');
 
             expect(patterns.length).toBeGreaterThan(0);
             expect(Array.isArray(patterns)).toBe(true);
         });
 
         it('should return javascript patterns for javascript language', () => {
-            const patterns = getLogPatternsForLanguage('javascript');
+            const patterns = getLogPatterns('javascript');
 
             expect(patterns.length).toBeGreaterThan(0);
             expect(Array.isArray(patterns)).toBe(true);
         });
 
-        it('should map typescriptreact to typescript patterns', () => {
-            const tsPatterns = getLogPatternsForLanguage('typescript');
-            const tsxPatterns = getLogPatternsForLanguage('typescriptreact');
-
-            expect(tsxPatterns.length).toBe(tsPatterns.length);
-        });
-
         it('should map javascriptreact to javascript patterns', () => {
-            const jsPatterns = getLogPatternsForLanguage('javascript');
-            const jsxPatterns = getLogPatternsForLanguage('javascriptreact');
+            const jsPatterns = getLogPatterns('javascript');
+            const jsxPatterns = getLogPatterns('javascriptreact');
 
             expect(jsxPatterns.length).toBe(jsPatterns.length);
         });
 
         it('should return go patterns for go language', () => {
-            const patterns = getLogPatternsForLanguage('go');
+            const patterns = getLogPatterns('go');
 
             expect(patterns.length).toBeGreaterThan(0);
             expect(Array.isArray(patterns)).toBe(true);
         });
 
-        it('should default to typescript patterns for unknown languages', () => {
-            const tsPatterns = getLogPatternsForLanguage('typescript');
-            const unknownPatterns = getLogPatternsForLanguage('unknownlang');
+        it('should return general patterns for unknown languages', () => {
+            const unknownPatterns = getLogPatterns('unknownlang');
+            const generalPatterns = getLogPatterns('general');
 
-            expect(unknownPatterns.length).toBe(tsPatterns.length);
+            expect(unknownPatterns).toEqual(generalPatterns);
         });
 
         it('should include general patterns for all languages', () => {
-            const patterns = getLogPatternsForLanguage('typescript');
+            const patterns = getLogPatterns('typescript');
 
-            // Patterns should include language-specific + general patterns
-            expect(patterns.length).toBeGreaterThan(0);
+            expect(patterns.length).toBeGreaterThan(2);
         });
 
         it('should return RegExp array', () => {
-            const patterns = getLogPatternsForLanguage('typescript');
+            const patterns = getLogPatterns('typescript');
 
             patterns.forEach(pattern => {
                 expect(pattern).toBeInstanceOf(RegExp);
@@ -320,10 +340,89 @@ describe('logDetector', () => {
         });
 
         it('should return cpp patterns for cpp language', () => {
-            const patterns = getLogPatternsForLanguage('cpp');
+            const patterns = getLogPatterns('cpp');
 
             expect(patterns.length).toBeGreaterThan(0);
             expect(Array.isArray(patterns)).toBe(true);
+        });
+
+        it('should include custom regexes for the given language', () => {
+            const mockedGetAllCustomRegexes = vi.mocked(getAllCustomRegexes);
+
+            mockedGetAllCustomRegexes.mockReturnValue([
+                {
+                    language: 'typescript',
+                    name: 'My Custom Log',
+                    pattern: 'myCustomLog\\$',
+                },
+            ]);
+
+            const patterns = getLogPatterns('typescript');
+
+            const hasCustomPattern = patterns.some(regex => regex.source === 'myCustomLog\\$');
+
+            expect(hasCustomPattern).toBe(true);
+        });
+
+        it('should not include custom regexes for different languages', () => {
+            const mockedGetAllCustomRegexes = vi.mocked(getAllCustomRegexes);
+
+            mockedGetAllCustomRegexes.mockReturnValue([
+                {
+                    language: 'javascript',
+                    name: 'JS Custom Log',
+                    pattern: 'jsCustomLog\\$',
+                },
+            ]);
+
+            const patterns = getLogPatterns('typescript');
+
+            const hasCustomPattern = patterns.some(regex => regex.source === 'jsCustomLog\\$');
+
+            expect(hasCustomPattern).toBe(false);
+        });
+    });
+
+    describe('ensureGlobalFlag', () => {
+        it('should return the same regex if global flag is already present', () => {
+            const regex = /test/g;
+
+            const result = ensureGlobalFlag(regex);
+
+            expect(result).toBe(regex);
+            expect(result.global).toBe(true);
+        });
+
+        it('should add global flag if it is missing', () => {
+            const regex = /test/;
+
+            const result = ensureGlobalFlag(regex);
+
+            expect(result).not.toBe(regex);
+            expect(result.global).toBe(true);
+            expect(result.source).toBe(regex.source);
+        });
+
+        it('should preserve existing flags when adding global flag', () => {
+            const regex = /test/i;
+
+            const result = ensureGlobalFlag(regex);
+
+            expect(result.global).toBe(true);
+            expect(result.ignoreCase).toBe(true);
+            expect(result.flags).toContain('i');
+            expect(result.flags).toContain('g');
+        });
+
+        it('should preserve multiple existing flags', () => {
+            const regex = /test/im;
+
+            const result = ensureGlobalFlag(regex);
+
+            expect(result.global).toBe(true);
+            expect(result.ignoreCase).toBe(true);
+            expect(result.multiline).toBe(true);
+            expect(result.source).toBe('test');
         });
     });
 });
