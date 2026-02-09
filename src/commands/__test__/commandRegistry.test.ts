@@ -85,7 +85,7 @@ describe('commandRegistry', () => {
         it('should register command twice', () => {
             registerCommands(mockContext);
 
-            expect(registerCommandMock).toHaveBeenCalledTimes(3);
+            expect(registerCommandMock).toHaveBeenCalledTimes(5);
         });
 
         it('should add command to context subscriptions', () => {
@@ -148,8 +148,8 @@ describe('commandRegistry', () => {
             registerCommands(mockContext);
             registerCommands(mockContext);
 
-            expect(registerCommandMock).toHaveBeenCalledTimes(6);
-            expect(mockContext.subscriptions.length).toBe(6);
+            expect(registerCommandMock).toHaveBeenCalledTimes(10);
+            expect(mockContext.subscriptions.length).toBe(10);
         });
 
         it('should preserve existing subscriptions', () => {
@@ -158,7 +158,7 @@ describe('commandRegistry', () => {
 
             registerCommands(mockContext);
 
-            expect(mockContext.subscriptions.length).toBe(4);
+            expect(mockContext.subscriptions.length).toBe(6);
             expect(mockContext.subscriptions).toContain(existingDisposable);
             expect(mockContext.subscriptions).toContain(mockDisposable);
         });
@@ -179,7 +179,18 @@ describe('commandRegistry', () => {
 
             registerCommands(mockContext);
 
-            expect(callOrder).toEqual(['register', 'register', 'register', 'subscribe', 'subscribe', 'subscribe']);
+            expect(callOrder).toEqual([
+                'register',
+                'register',
+                'register',
+                'register',
+                'register',
+                'subscribe',
+                'subscribe',
+                'subscribe',
+                'subscribe',
+                'subscribe',
+            ]);
         });
 
         it('should work with empty context subscriptions', () => {
@@ -187,7 +198,7 @@ describe('commandRegistry', () => {
 
             registerCommands(mockContext);
 
-            expect(mockContext.subscriptions.length).toBe(3);
+            expect(mockContext.subscriptions.length).toBe(5);
             expect(mockContext.subscriptions[0]).toBe(mockDisposable);
         });
 

@@ -11,7 +11,7 @@ import { getAllCustomRegexes } from '../config/configManager';
 export function findLogStatements(editor: vscode.TextEditor): vscode.DecorationOptions[] {
     const text = editor.document.getText();
     const languageId = editor.document.languageId;
-    const patterns = getLogPatternsForLanguage(languageId);
+    const patterns = getLogPatterns(languageId);
 
     const logRanges: vscode.DecorationOptions[] = [];
 
@@ -38,10 +38,10 @@ export function findMatchesWithRegex(
     editor: vscode.TextEditor,
 ): vscode.DecorationOptions[] {
     const ranges: vscode.DecorationOptions[] = [];
+    const globalRegex = ensureGlobalFlag(regex);
     let match;
 
-    // Reset regex lastIndex to ensure proper matching
-    while ((match = regex.exec(text))) {
+    while ((match = globalRegex.exec(text))) {
         const startPos = editor.document.positionAt(match.index);
         const endPos = editor.document.positionAt(match.index + match[0].length);
         ranges.push({ range: new vscode.Range(startPos, endPos) });
@@ -56,7 +56,7 @@ export function findMatchesWithRegex(
  * @param languageId The language ID of the document.
  * @returns An array of regex patterns for the specified language.
  */
-export function getLogPatternsForLanguage(languageId: string): RegExp[] {
+export function getLogPatterns(languageId: string): RegExp[] {
     const languageMap: { [key: string]: keyof typeof LOG_PATTERNS } = {
         typescript: 'typescript',
         javascript: 'javascript',
@@ -71,11 +71,24 @@ export function getLogPatternsForLanguage(languageId: string): RegExp[] {
 
     // Get all patterns: language-specific, custom regexes for the language, and general patterns
     const languagePatterns = patternKey ? LOG_PATTERNS[patternKey] : [];
-    const customRegexes = getAllCustomRegexes().filter(regex => regex.language === languageId);
+    const customPatterns = getAllCustomRegexes().filter(regex => regex.language === languageId);
     const generalPatterns = LOG_PATTERNS.general;
 
     // Combine all patterns into a single array
-    const allPatterns = [...languagePatterns, ...customRegexes.map(r => new RegExp(r.pattern)), ...generalPatterns];
+    const allPatterns = [...languagePatterns, ...customPatterns.map(r => new RegExp(r.pattern)), ...generalPatterns];
 
     return allPatterns;
+}
+
+/**
+ * Ensures a regex has the global flag set.
+ *
+ * @param regex The regex pattern to check.
+ * @returns A new regex with the global flag added if it wasn't present.
+ */
+export function ensureGlobalFlag(regex: RegExp): RegExp {
+    if (regex.global) {
+        return regex;
+    }
+    return new RegExp(regex.source, regex.flags + 'g');
 }
