@@ -11,8 +11,8 @@ VS Code extension that adjusts the visual appearance of log statements in your c
 
 Example:
 
-<img src=".github/assets/unobtrusive-logs-off.png" alt="Unobtrusive Logs off" width="400" height="100" style="margin-right: 10px;">
-<img src=".github/assets/unobtrusive-logs-on.png" alt="Unobtrusive Logs on" width="400" height="100">
+<img src=".github/assets/unobtrusive-logs-off.png" alt="Unobtrusive Logs off" width="300" height="75" style="margin-right: 10px;">
+<img src=".github/assets/unobtrusive-logs-on.png" alt="Unobtrusive Logs on" width="300" height="75">
 
 ## Features
 
