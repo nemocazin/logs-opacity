@@ -11,7 +11,17 @@ VS Code extension that adjusts the visual appearance of log statements in your c
 
 Example:
 
-<img src=".github/assets/unobtrusive-logs-off.png" alt="Unobtrusive Logs off" width="300" height="75" style="margin-right: 10px;"> <img src=".github/assets/unobtrusive-logs-on.png" alt="Unobtrusive Logs on" width="300" height="75">
+<div style="text-align: left;">
+  <figure style="display: inline-block; margin-right: 10px;">
+    <img src=".github/assets/unobtrusive-logs-off.png" alt="Unobtrusive Logs off" width="300" height="75">
+    <figcaption><em>Before: Standard log appearance</em></figcaption>
+  </figure>
+  
+  <figure style="display: inline-block;">
+    <img src=".github/assets/unobtrusive-logs-on.png" alt="Unobtrusive Logs on" width="300" height="75">
+    <figcaption><em>After: Unobtrusive logs enabled</em></figcaption>
+  </figure>
+</div>
 
 ## Features
 
@@ -50,7 +60,7 @@ Then they will ask to select a language, to name the regex and to write the rege
 Example:
 
 ```typescript
-console\.help\(([\s\S]*?)\);?                   // Regex for the following log statement
+console\.help\(([\s\S]*?)\);?   // Regex for the following log statement
 console.help("I need help for this regex !")
 ```
 
