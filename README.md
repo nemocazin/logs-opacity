@@ -9,19 +9,15 @@
 
 VS Code extension that adjusts the visual appearance of log statements in your code by controlling their opacity and color, making them less obtrusive while coding.
 
-Example:
+<ins>Example:</ins>
 
-<div style="text-align: left;">
-  <figure style="display: inline-block; margin-right: 10px;">
-    <img src=".github/assets/unobtrusive-logs-off.png" alt="Unobtrusive Logs off" width="300" height="75">
-    <figcaption><em>Before: Standard log appearance</em></figcaption>
-  </figure>
-  
-  <figure style="display: inline-block;">
-    <img src=".github/assets/unobtrusive-logs-on.png" alt="Unobtrusive Logs on" width="300" height="75">
-    <figcaption><em>After: Unobtrusive logs enabled</em></figcaption>
-  </figure>
-</div>
+<img src=".github/assets/unobtrusive-logs-off.png" alt="Unobtrusive Logs off" width="300" height="75" style="margin-right: 10px;">
+
+_Before: Standard log appearance_
+
+<img src=".github/assets/unobtrusive-logs-on.png" alt="Unobtrusive Logs on" width="300" height="75">
+
+_After: Unobtrusive logs enabled_
 
 ## Features
 
