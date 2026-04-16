@@ -2,16 +2,13 @@
  * Predefined log statement patterns for various programming languages.
  */
 export const LOG_PATTERNS = {
-    general: [
-        /\blog\.\w+\s*\([^()]*(?:\([^()]*\)[^()]*)*\)(?:\.\w+\s*\([^()]*(?:\([^()]*\)[^()]*)*\))*;?/gs,
-        /\bLog\.\w+\s*\([^()]*(?:\([^()]*\)[^()]*)*\)(?:\.\w+\s*\([^()]*(?:\([^()]*\)[^()]*)*\))*;?/gs,
-    ],
+    general: ['log', 'logs', 'Logs'],
 
-    typescript: [/console\.(log|warn|error|info|debug|trace)\s*\([^)]*\);?/gs],
+    typescript: ['console.log', 'console.error', 'console.warn', 'console.info', 'console.debug', 'console.trace'],
 
-    javascript: [/console\.(log|warn|error|info|debug|trace)\s*\([^)]*\);?/gs],
+    javascript: ['console.log', 'console.error', 'console.warn', 'console.info', 'console.debug', 'console.trace'],
 
-    go: [/logger\.\w+\s*\([^)]*\)/gs, /\w+\.Logs\.\w+\((?:[^()]*|\([^()]*\))*\)[^;]*;?/gs],
+    go: ['logger.Info', 'logger.Warn', 'logger.Error'],
 
-    cpp: [/std::(cout|cerr|clog)\s*<<[^;]*;?/gs, /(cout|cerr|clog)\s*<<[^;]*;?/gs],
+    cpp: ['std::cout', 'std::cerr', 'std::clog'],
 };
