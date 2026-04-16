@@ -61,40 +61,40 @@ export async function saveOpacityToConfig(opacity: number): Promise<void> {
 }
 
 /**
- * Retrieves the custom regexes from the configuration.
+ * Retrieves the custom patterns from the configuration.
  *
- * @returns An array of custom regex objects, each containing language, name, and pattern properties.
+ * @returns An array of custom pattern objects, each containing language, name, and pattern properties.
  */
-export function getAllCustomRegexes(): Array<{ language: string; name: string; pattern: string }> {
+export function getAllCustomPatterns(): Array<{ language: string; name: string; pattern: string }> {
     const config = vscode.workspace.getConfiguration('unobtrusive-logs');
-    return config.get('custom-regexes', []);
+    return config.get('custom-patterns', []);
 }
 
 /**
- * Adds a new custom regex item to the configuration.
+ * Adds a new custom pattern item to the configuration.
  *
- * @param language The programming language associated with the regex.
- * @param name The name of the regex item.
- * @param pattern The regex pattern to be added.
+ * @param language The programming language associated with the pattern.
+ * @param name The name of the pattern item.
+ * @param pattern The pattern to be added.
  */
-export async function saveCustomRegex(language: string, name: string, pattern: string) {
+export async function saveCustomPattern(language: string, name: string, pattern: string) {
     const config = vscode.workspace.getConfiguration('unobtrusive-logs');
-    const items = getAllCustomRegexes();
+    const items = getAllCustomPatterns();
     items.push({ language, name, pattern });
-    await config.update('custom-regexes', items, vscode.ConfigurationTarget.Global);
+    await config.update('custom-patterns', items, vscode.ConfigurationTarget.Global);
 }
 
 /**
- * Removes a custom regex item from the configuration based on its name.
+ * Removes a custom pattern item from the configuration based on its name.
  *
- * @param name The name of the regex item to be removed.
+ * @param name The name of the pattern item to be removed.
  */
-export async function deleteCustomRegex(name: string) {
+export async function deleteCustomPattern(name: string) {
     const config = vscode.workspace.getConfiguration('unobtrusive-logs');
-    const items = getAllCustomRegexes();
+    const items = getAllCustomPatterns();
     const index = items.findIndex(item => item.name === name);
     if (index !== -1) {
         items.splice(index, 1);
-        await config.update('custom-regexes', items, vscode.ConfigurationTarget.Global);
+        await config.update('custom-patterns', items, vscode.ConfigurationTarget.Global);
     }
 }

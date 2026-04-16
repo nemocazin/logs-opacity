@@ -26,8 +26,8 @@ export function registerEventListeners(context: vscode.ExtensionContext): void {
                 e.affectsConfiguration('unobtrusive-logs.opacity') ||
                 e.affectsConfiguration('unobtrusive-logs.color') ||
                 e.affectsConfiguration('unobtrusive-logs.toggle') ||
-                e.affectsConfiguration('unobtrusive-logs.addCustomRegex') ||
-                e.affectsConfiguration('unobtrusive-logs.deleteCustomRegex')
+                e.affectsConfiguration('unobtrusive-logs.addCustomPattern') ||
+                e.affectsConfiguration('unobtrusive-logs.deleteCustomPattern')
             ) {
                 recreateDecoration();
                 updateAllVisibleEditors();

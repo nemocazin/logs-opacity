@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { LOG_PATTERNS } from './patterns';
-import { getAllCustomRegexes } from '../config/configManager';
+import { getAllCustomPatterns } from '../config/configManager';
 
 /**
  * Finds log statements in the given text editor based on predefined patterns.
@@ -15,7 +15,7 @@ export function findLogStatements(editor: vscode.TextEditor): vscode.DecorationO
 
     const logRanges: vscode.DecorationOptions[] = [];
 
-    // Apply each regex pattern to find log statements
+    // Apply each pattern to find log statements
     patterns.forEach(search => {
         const ranges = findMatchesWithString(text, search, editor);
         logRanges.push(...ranges);
@@ -129,7 +129,7 @@ function createRange(editor: vscode.TextEditor, startIndex: number, endIndex: nu
  * Retrieves log patterns based on the language ID.
  *
  * @param languageId The language ID of the document.
- * @returns An array of regex patterns for the specified language.
+ * @returns An array of patterns for the specified language.
  */
 export function getLogPatterns(languageId: string): string[] {
     const languageMap: { [key: string]: keyof typeof LOG_PATTERNS } = {
@@ -146,9 +146,9 @@ export function getLogPatterns(languageId: string): string[] {
 
     // Get all patterns: language-specific, custom patterns for the language, and general patterns
     const languagePatterns = patternKey ? LOG_PATTERNS[patternKey] : [];
-    const customPatterns = getAllCustomRegexes()
-        .filter(regex => regex.language === languageId)
-        .map(regex => regex.pattern);
+    const customPatterns = getAllCustomPatterns()
+        .filter(pattern => pattern.language === languageId)
+        .map(pattern => pattern.pattern);
     const generalPatterns = LOG_PATTERNS.general;
 
     // Combine all patterns into a single array
