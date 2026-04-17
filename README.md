@@ -56,8 +56,8 @@ Then they will ask to select a language, to name the pattern and to write the pa
 Example:
 
 ```typescript
-console\.help\(([\s\S]*?)\);?   // Pattern for the following log statement
-console.help("I need help for this pattern !")
+// Write <console.help> in the input of the addCustomPattern command
+console.help('I need help for this pattern !'); // This sentence should be find
 ```
 
 ## Contact
