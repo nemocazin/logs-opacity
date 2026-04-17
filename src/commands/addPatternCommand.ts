@@ -24,7 +24,7 @@ export async function handleAddCustomPatternCommand(): Promise<void> {
         return;
     }
 
-    // Get user input for language, name, and pattern pattern
+    // Get user input for language, name, and pattern
     const selectedLanguage = await promptForLanguage();
     const patternNameInput = await promptForName();
     const patternInput = await promptForPattern();
@@ -63,13 +63,13 @@ export async function promptForName(): Promise<string | undefined> {
 }
 
 /**
- * Prompts the user to enter a pattern pattern to match log statements.
+ * Prompts the user to enter a pattern to match log statements.
  *
- * @returns The pattern pattern entered by the user, or undefined if no input was provided.
+ * @returns The pattern entered by the user, or undefined if no input was provided.
  */
 export async function promptForPattern(): Promise<string | undefined> {
     return vscode.window.showInputBox({
-        prompt: 'Enter pattern pattern to match log statements.',
+        prompt: 'Enter a pattern to match log statements.',
     });
 }
 

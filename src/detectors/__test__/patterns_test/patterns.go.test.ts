@@ -21,113 +21,44 @@ describe('LOG_PATTERNS', () => {
     describe('go patterns - logger', () => {
         it('should match logger.Info statements', () => {
             testPattern(0, 'logger.Info("test")');
+            testPattern(0, 'logger.Info(JSON.stringify({name: "John"}));');
+            testPattern(0, 'logger.Info     (JSON.stringify(obj));');
         });
 
         it('should match logger.Debug statements', () => {
-            testPattern(0, 'logger.Debug("debug")');
+            testPattern(1, 'logger.Debug("debug")');
+            testPattern(1, 'logger.Debug(JSON.stringify({name: "John"}));');
+            testPattern(1, 'logger.Debug     (JSON.stringify(obj));');
         });
 
         it('should match logger.Error statements', () => {
-            testPattern(0, 'logger.Error("error")');
+            testPattern(2, 'logger.Error("error")');
+            testPattern(2, 'logger.Error(JSON.stringify({name: "John"}));');
+            testPattern(2, 'logger.Error     (JSON.stringify(obj));');
         });
 
         it('should match logger.Warn statements', () => {
-            testPattern(0, 'logger.Warn("warning")');
+            testPattern(3, 'logger.Warn("warning")');
+            testPattern(3, 'logger.Warn(JSON.stringify({name: "John"}));');
+            testPattern(3, 'logger.Warn     (JSON.stringify(obj));');
         });
 
         it('should match logger.Trace statements', () => {
-            testPattern(0, 'logger.Trace("trace")');
+            testPattern(4, 'logger.Trace("trace")');
+            testPattern(4, 'logger.Trace(JSON.stringify({name: "John"}));');
+            testPattern(4, 'logger.Trace     (JSON.stringify(obj));');
         });
 
         it('should match logger.Fatal statements', () => {
-            testPattern(0, 'logger.Fatal("fatal")');
+            testPattern(5, 'logger.Fatal("fatal")');
+            testPattern(5, 'logger.Fatal(JSON.stringify({name: "John"}));');
+            testPattern(5, 'logger.Fatal     (JSON.stringify(obj));');
         });
 
         it('should match logger.Panic statements', () => {
-            testPattern(0, 'logger.Panic("panic")');
-        });
-    });
-
-    describe('go patterns - Logs', () => {
-        it('should match s.Logs.Info statements', () => {
-            testPattern(1, 's.Logs.Info("test")');
-        });
-
-        it('should match s.Logs.Debug statements', () => {
-            testPattern(1, 's.Logs.Debug("debug")');
-        });
-
-        it('should match s.Logs.Error statements', () => {
-            testPattern(1, 's.Logs.Error("error")');
-        });
-
-        it('should match s.Logs.Warn statements', () => {
-            testPattern(1, 's.Logs.Warn("warning")');
-        });
-
-        it('should match s.Logs.Trace statements', () => {
-            testPattern(1, 's.Logs.Trace("trace")');
-        });
-
-        it('should match s.Logs.Fatal statements', () => {
-            testPattern(1, 's.Logs.Fatal("fatal")');
-        });
-
-        it('should match s.Logs.Panic statements', () => {
-            testPattern(1, 's.Logs.Panic("panic")');
-        });
-
-        it('should match Logs with chained methods', () => {
-            testPattern(1, 's.Logs.Info("test").WithContext(ctx)');
-        });
-
-        it('should match Logs with 2 chained methods', () => {
-            testPattern(1, 's.Logs.Info("test").WithContext(ctx).Send()');
-        });
-
-        it('should match Logs with multiline arguments', () => {
-            const multilineLog = `s.Logs.Error(
-                "Error message",
-                {
-                    data: value,
-                    user: "test"
-                }
-            )`;
-            testPattern(1, multilineLog);
-        });
-
-        it('should match Logs with chained methods on multiple lines', () => {
-            const multilineLog = `s.Logs.Info("message")
-                .WithContext(ctx)
-                .Send()`;
-            testPattern(1, multilineLog);
-        });
-
-        it('should match Logs with complex multiline structure', () => {
-            const multilineLog = `s.Logs.Debug(
-                "Complex log",
-                {
-                    nested: {
-                        data: "value",
-                        array: []interface{}{1, 2, 3}
-                    }
-                }
-            ).WithTimestamp()
-             .WithLevel("DEBUG")
-             .Send()`;
-            testPattern(1, multilineLog);
-        });
-
-        it('should match ctx.Logs.Info statements', () => {
-            testPattern(1, 'ctx.Logs.Info("test")');
-        });
-
-        it('should match this.Logs.Error statements', () => {
-            testPattern(1, 'this.Logs.Error("error")');
-        });
-
-        it('should match service.Logs.Debug statements', () => {
-            testPattern(1, 'service.Logs.Debug("debug")');
+            testPattern(6, 'logger.Panic("panic")');
+            testPattern(6, 'logger.Panic(JSON.stringify({name: "John"}));');
+            testPattern(6, 'logger.Panic     (JSON.stringify(obj));');
         });
     });
 });

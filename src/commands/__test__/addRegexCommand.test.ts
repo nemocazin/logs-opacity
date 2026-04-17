@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as vscode from 'vscode';
-import { handleAddCustomRegexCommand } from '../addRegexCommand';
+import { handleAddCustomPatternCommand } from '../addPatternCommand';
 import * as configManager from '../../config/configManager';
 import * as decoration from '../../core/decoration';
 
@@ -17,9 +17,9 @@ vi.mock('vscode', () => ({
 vi.mock('../../config/configManager');
 vi.mock('../../core/decoration');
 
-describe('addCustomRegexCommand', () => {
+describe('addCustomPatternCommand', () => {
     let getToggleFromConfigMock: ReturnType<typeof vi.fn>;
-    let saveCustomRegexMock: ReturnType<typeof vi.fn>;
+    let saveCustomPatternMock: ReturnType<typeof vi.fn>;
     let recreateDecorationMock: ReturnType<typeof vi.fn>;
     let showQuickPickMock: ReturnType<typeof vi.fn>;
     let showInputBoxMock: ReturnType<typeof vi.fn>;
@@ -29,14 +29,14 @@ describe('addCustomRegexCommand', () => {
         vi.clearAllMocks();
 
         getToggleFromConfigMock = vi.mocked(configManager.getToggleFromConfig);
-        saveCustomRegexMock = vi.mocked(configManager.saveCustomRegex);
+        saveCustomPatternMock = vi.mocked(configManager.saveCustomPattern);
         recreateDecorationMock = vi.mocked(decoration.recreateDecoration);
         showQuickPickMock = vi.mocked(vscode.window.showQuickPick);
         showInputBoxMock = vi.mocked(vscode.window.showInputBox);
         showInformationMessageMock = vi.mocked(vscode.window.showInformationMessage);
 
         getToggleFromConfigMock.mockReturnValue(true);
-        saveCustomRegexMock.mockResolvedValue(undefined);
+        saveCustomPatternMock.mockResolvedValue(undefined);
         recreateDecorationMock.mockImplementation(() => {});
     });
 
@@ -44,21 +44,21 @@ describe('addCustomRegexCommand', () => {
         vi.restoreAllMocks();
     });
 
-    describe('handleAddCustomRegexCommand', () => {
-        it('should save custom regex when user provides all inputs', async () => {
+    describe('handleAddCustomPatternCommand', () => {
+        it('should save custom pattern when user provides all inputs', async () => {
             showQuickPickMock.mockResolvedValue({
                 label: 'JavaScript',
                 languageId: 'javascript',
             });
-            showInputBoxMock.mockResolvedValueOnce('myRegex');
+            showInputBoxMock.mockResolvedValueOnce('myPattern');
             showInputBoxMock.mockResolvedValueOnce('console\\.log');
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
-            expect(saveCustomRegexMock).toHaveBeenCalledWith('javascript', 'myRegex', 'console\\.log');
+            expect(saveCustomPatternMock).toHaveBeenCalledWith('javascript', 'myPattern', 'console\\.log');
         });
 
-        it('should recreate decoration after saving custom regex', async () => {
+        it('should recreate decoration after saving custom pattern', async () => {
             showQuickPickMock.mockResolvedValue({
                 label: 'Go',
                 languageId: 'go',
@@ -66,12 +66,12 @@ describe('addCustomRegexCommand', () => {
             showInputBoxMock.mockResolvedValueOnce('goLog');
             showInputBoxMock.mockResolvedValueOnce('fmt\\.Println');
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
             expect(recreateDecorationMock).toHaveBeenCalledTimes(1);
         });
 
-        it('should show confirmation message with regex name and language', async () => {
+        it('should show confirmation message with pattern name and language', async () => {
             showQuickPickMock.mockResolvedValue({
                 label: 'TypeScript',
                 languageId: 'typescript',
@@ -79,31 +79,31 @@ describe('addCustomRegexCommand', () => {
             showInputBoxMock.mockResolvedValueOnce('tsLog');
             showInputBoxMock.mockResolvedValueOnce('console\\.debug');
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
-            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom regex "tsLog" added for typescript.');
+            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom pattern "tsLog" added for typescript.');
         });
 
         it('should return if extension is toggled off', async () => {
             getToggleFromConfigMock.mockReturnValue(false);
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
             expect(showInformationMessageMock).toHaveBeenCalledWith(
-                'Please toggle on the extension before adding a custom regex.',
+                'Please toggle on the extension before adding a custom pattern.',
             );
-            expect(saveCustomRegexMock).not.toHaveBeenCalled();
+            expect(saveCustomPatternMock).not.toHaveBeenCalled();
             expect(recreateDecorationMock).not.toHaveBeenCalled();
         });
 
         it('should not save when user cancels language selection', async () => {
             showQuickPickMock.mockResolvedValue(undefined);
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
-            expect(saveCustomRegexMock).not.toHaveBeenCalled();
+            expect(saveCustomPatternMock).not.toHaveBeenCalled();
             expect(recreateDecorationMock).not.toHaveBeenCalled();
-            expect(showInformationMessageMock).not.toHaveBeenCalledWith(expect.stringContaining('Custom regex'));
+            expect(showInformationMessageMock).not.toHaveBeenCalledWith(expect.stringContaining('Custom pattern'));
         });
 
         it('should not save when user cancels name input', async () => {
@@ -113,23 +113,23 @@ describe('addCustomRegexCommand', () => {
             });
             showInputBoxMock.mockResolvedValueOnce(undefined);
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
-            expect(saveCustomRegexMock).not.toHaveBeenCalled();
+            expect(saveCustomPatternMock).not.toHaveBeenCalled();
             expect(recreateDecorationMock).not.toHaveBeenCalled();
         });
 
-        it('should not save when user cancels regex pattern input', async () => {
+        it('should not save when user cancels pattern pattern input', async () => {
             showQuickPickMock.mockResolvedValue({
                 label: 'JavaScript',
                 languageId: 'javascript',
             });
-            showInputBoxMock.mockResolvedValueOnce('myRegex');
+            showInputBoxMock.mockResolvedValueOnce('myPattern');
             showInputBoxMock.mockResolvedValueOnce(undefined);
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
-            expect(saveCustomRegexMock).not.toHaveBeenCalled();
+            expect(saveCustomPatternMock).not.toHaveBeenCalled();
             expect(recreateDecorationMock).not.toHaveBeenCalled();
         });
 
@@ -141,10 +141,10 @@ describe('addCustomRegexCommand', () => {
             showInputBoxMock.mockResolvedValueOnce('generalLog');
             showInputBoxMock.mockResolvedValueOnce('log');
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
-            expect(saveCustomRegexMock).toHaveBeenCalledWith('general', 'generalLog', 'log');
-            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom regex "generalLog" added for general.');
+            expect(saveCustomPatternMock).toHaveBeenCalledWith('general', 'generalLog', 'log');
+            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom pattern "generalLog" added for general.');
         });
 
         it('should handle C++ language selection', async () => {
@@ -155,10 +155,10 @@ describe('addCustomRegexCommand', () => {
             showInputBoxMock.mockResolvedValueOnce('cppLog');
             showInputBoxMock.mockResolvedValueOnce('std::cout');
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
-            expect(saveCustomRegexMock).toHaveBeenCalledWith('cpp', 'cppLog', 'std::cout');
-            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom regex "cppLog" added for cpp.');
+            expect(saveCustomPatternMock).toHaveBeenCalledWith('cpp', 'cppLog', 'std::cout');
+            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom pattern "cppLog" added for cpp.');
         });
 
         it('should execute functions in correct order', async () => {
@@ -168,9 +168,9 @@ describe('addCustomRegexCommand', () => {
                 label: 'JavaScript',
                 languageId: 'javascript',
             });
-            showInputBoxMock.mockResolvedValueOnce('myRegex');
+            showInputBoxMock.mockResolvedValueOnce('myPattern');
             showInputBoxMock.mockResolvedValueOnce('console\\.log');
-            saveCustomRegexMock.mockImplementation(() => {
+            saveCustomPatternMock.mockImplementation(() => {
                 callOrder.push('save');
             });
             recreateDecorationMock.mockImplementation(() => {
@@ -180,7 +180,7 @@ describe('addCustomRegexCommand', () => {
                 callOrder.push('confirm');
             });
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
             expect(callOrder).toEqual(['save', 'recreate', 'confirm']);
         });
@@ -190,7 +190,7 @@ describe('addCustomRegexCommand', () => {
         it('should display language picker with correct placeholder', async () => {
             showQuickPickMock.mockResolvedValue(undefined);
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
             expect(showQuickPickMock).toHaveBeenCalledWith(
                 expect.arrayContaining([
@@ -198,7 +198,7 @@ describe('addCustomRegexCommand', () => {
                     expect.objectContaining({ label: 'JavaScript', languageId: 'javascript' }),
                 ]),
                 {
-                    placeHolder: 'Select a language for your custom regex.',
+                    placeHolder: 'Select a language for your custom pattern.',
                     matchOnDescription: true,
                 },
             );
@@ -207,7 +207,7 @@ describe('addCustomRegexCommand', () => {
         it('should include all 5 language options', async () => {
             showQuickPickMock.mockResolvedValue(undefined);
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
             const calls = showQuickPickMock.mock.calls;
             expect(calls.length).toBeGreaterThan(0);
@@ -219,7 +219,7 @@ describe('addCustomRegexCommand', () => {
         it('should have matchOnDescription set to true', async () => {
             showQuickPickMock.mockResolvedValue(undefined);
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
             const calls = showQuickPickMock.mock.calls;
             expect(calls.length).toBeGreaterThan(0);
@@ -237,45 +237,45 @@ describe('addCustomRegexCommand', () => {
             });
             showInputBoxMock.mockResolvedValueOnce(undefined);
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
             expect(showInputBoxMock).toHaveBeenCalledWith({
-                prompt: 'Enter a name for your custom regex.',
+                prompt: 'Enter a name for your custom pattern.',
             });
         });
     });
 
-    describe('promptForRegex', () => {
-        it('should show input box with correct prompt for regex pattern', async () => {
+    describe('promptForPattern', () => {
+        it('should show input box with correct prompt for pattern', async () => {
             showQuickPickMock.mockResolvedValue({
                 label: 'JavaScript',
                 languageId: 'javascript',
             });
-            showInputBoxMock.mockResolvedValueOnce('myRegex');
+            showInputBoxMock.mockResolvedValueOnce('myPattern');
             showInputBoxMock.mockResolvedValueOnce(undefined);
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
             const calls = showInputBoxMock.mock.calls;
             expect(calls[1]?.[0]).toEqual({
-                prompt: 'Enter regex pattern to match log statements.',
+                prompt: 'Enter a pattern to match log statements.',
             });
         });
     });
 
-    describe('showAddRegexConfirmation', () => {
+    describe('showAddPatternConfirmation', () => {
         it('should show message with language and name', async () => {
             showQuickPickMock.mockResolvedValue({
                 label: 'TypeScript',
                 languageId: 'typescript',
             });
-            showInputBoxMock.mockResolvedValueOnce('myCustomRegex');
+            showInputBoxMock.mockResolvedValueOnce('myCustomPattern');
             showInputBoxMock.mockResolvedValueOnce('console\\.info');
 
-            await handleAddCustomRegexCommand();
+            await handleAddCustomPatternCommand();
 
             expect(showInformationMessageMock).toHaveBeenCalledWith(
-                'Custom regex "myCustomRegex" added for typescript.',
+                'Custom pattern "myCustomPattern" added for typescript.',
             );
         });
     });

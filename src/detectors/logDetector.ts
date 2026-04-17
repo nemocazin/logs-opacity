@@ -16,8 +16,8 @@ export function findLogStatements(editor: vscode.TextEditor): vscode.DecorationO
     const logRanges: vscode.DecorationOptions[] = [];
 
     // Apply each pattern to find log statements
-    patterns.forEach(search => {
-        const ranges = findMatchesWithString(text, search, editor);
+    patterns.forEach(pattern => {
+        const ranges = findMatchesWithPattern(text, pattern, editor);
         logRanges.push(...ranges);
     });
 
@@ -28,33 +28,33 @@ export function findLogStatements(editor: vscode.TextEditor): vscode.DecorationO
  * Finds all matches of a string pattern in the given text and returns their ranges.
  *
  * @param text The text to search in.
- * @param search The string pattern to search for.
+ * @param pattern The string pattern to search for.
  * @param editor The text editor containing the text.
  * @returns An array of decoration options for each match found.
  */
-export function findMatchesWithString(
+export function findMatchesWithPattern(
     text: string,
-    search: string,
+    pattern: string,
     editor: vscode.TextEditor,
 ): vscode.DecorationOptions[] {
     const logRanges: vscode.DecorationOptions[] = [];
     let index = 0;
 
     // Search for the string pattern in the text
-    while ((index = text.indexOf(search, index)) !== -1) {
+    while ((index = text.indexOf(pattern, index)) !== -1) {
         const startIndex = index;
 
         // Check for an opening parenthesis after the pattern to confirm it's a log statement
-        const openParenIndex = findOpeningParenthesis(text, startIndex, search);
+        const openParenIndex = findOpeningParenthesis(text, startIndex, pattern);
         if (openParenIndex === -1) {
-            index = startIndex + search.length;
+            index = startIndex + pattern.length;
             continue;
         }
 
         // Find the corresponding closing parenthesis to get the full log statement
         const endIndex = findClosingParenthesis(text, openParenIndex);
         if (endIndex === -1) {
-            index = startIndex + search.length;
+            index = startIndex + pattern.length;
             continue;
         }
 
@@ -62,7 +62,7 @@ export function findMatchesWithString(
         const range = createRange(editor, startIndex, endIndex + 1);
         logRanges.push({ range });
 
-        index = startIndex + search.length;
+        index = startIndex + pattern.length;
     }
 
     return logRanges;
@@ -138,7 +138,6 @@ export function getLogPatterns(languageId: string): string[] {
         typescriptreact: 'typescript',
         javascriptreact: 'javascript',
         go: 'go',
-        cpp: 'cpp',
     };
 
     // Get patterns for the language
