@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.0] - 2026-02-09
+
+### Changed
+
+- Replaced the "regex" keyword by the "pattern" keyword
+- Removed regex-based logic and replaced it with a parenthesis matching approach to ensure all log sentences are detected
+
+### Fixed
+
+- General patterns are now applied to all languages
+
 ## [1.2.0] - 2026-02-09
 
 ### Added
