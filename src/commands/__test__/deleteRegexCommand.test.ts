@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as vscode from 'vscode';
-import { handleDeleteCustomRegexCommand } from '../deleteRegexCommands';
+import { handleDeleteCustomPatternCommand } from '../deletePatternCommands';
 import * as configManager from '../../config/configManager';
 import * as decoration from '../../core/decoration';
 
@@ -16,10 +16,10 @@ vi.mock('vscode', () => ({
 vi.mock('../../config/configManager');
 vi.mock('../../core/decoration');
 
-describe('deleteCustomRegexCommand', () => {
+describe('deleteCustomPatternCommand', () => {
     let getToggleFromConfigMock: ReturnType<typeof vi.fn>;
-    let getAllCustomRegexesMock: ReturnType<typeof vi.fn>;
-    let deleteCustomRegexMock: ReturnType<typeof vi.fn>;
+    let getAllCustomPatternsMock: ReturnType<typeof vi.fn>;
+    let deleteCustomPatternMock: ReturnType<typeof vi.fn>;
     let recreateDecorationMock: ReturnType<typeof vi.fn>;
     let showQuickPickMock: ReturnType<typeof vi.fn>;
     let showInformationMessageMock: ReturnType<typeof vi.fn>;
@@ -28,18 +28,18 @@ describe('deleteCustomRegexCommand', () => {
         vi.clearAllMocks();
 
         getToggleFromConfigMock = vi.mocked(configManager.getToggleFromConfig);
-        getAllCustomRegexesMock = vi.mocked(configManager.getAllCustomRegexes);
-        deleteCustomRegexMock = vi.mocked(configManager.deleteCustomRegex);
+        getAllCustomPatternsMock = vi.mocked(configManager.getAllCustomPatterns);
+        deleteCustomPatternMock = vi.mocked(configManager.deleteCustomPattern);
         recreateDecorationMock = vi.mocked(decoration.recreateDecoration);
         showQuickPickMock = vi.mocked(vscode.window.showQuickPick);
         showInformationMessageMock = vi.mocked(vscode.window.showInformationMessage);
 
         getToggleFromConfigMock.mockReturnValue(true);
-        getAllCustomRegexesMock.mockReturnValue([
-            { name: 'myRegex', pattern: 'console\\.log', language: 'javascript' },
+        getAllCustomPatternsMock.mockReturnValue([
+            { name: 'myPattern', pattern: 'console\\.log', language: 'javascript' },
             { name: 'goLog', pattern: 'fmt\\.Println', language: 'go' },
         ]);
-        deleteCustomRegexMock.mockResolvedValue(undefined);
+        deleteCustomPatternMock.mockResolvedValue(undefined);
         recreateDecorationMock.mockImplementation(() => {});
     });
 
@@ -47,84 +47,84 @@ describe('deleteCustomRegexCommand', () => {
         vi.restoreAllMocks();
     });
 
-    describe('handleDeleteCustomRegexCommand', () => {
-        it('should delete custom regex when user selects one', async () => {
-            showQuickPickMock.mockResolvedValue('myRegex');
+    describe('handleDeleteCustomPatternCommand', () => {
+        it('should delete custom pattern when user selects one', async () => {
+            showQuickPickMock.mockResolvedValue('myPattern');
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
-            expect(deleteCustomRegexMock).toHaveBeenCalledWith('myRegex');
+            expect(deleteCustomPatternMock).toHaveBeenCalledWith('myPattern');
         });
 
-        it('should recreate decoration after deleting custom regex', async () => {
+        it('should recreate decoration after deleting custom pattern', async () => {
             showQuickPickMock.mockResolvedValue('goLog');
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
             expect(recreateDecorationMock).toHaveBeenCalledTimes(1);
         });
 
-        it('should show confirmation message with deleted regex name', async () => {
-            showQuickPickMock.mockResolvedValue('myRegex');
+        it('should show confirmation message with deleted pattern name', async () => {
+            showQuickPickMock.mockResolvedValue('myPattern');
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
-            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom regex "myRegex" deleted.');
+            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom pattern "myPattern" deleted.');
         });
 
         it('should return if extension is toggled off', async () => {
             getToggleFromConfigMock.mockReturnValue(false);
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
             expect(showInformationMessageMock).toHaveBeenCalledWith(
-                'Please toggle on the extension before deleting a custom regex.',
+                'Please toggle on the extension before deleting a custom pattern.',
             );
-            expect(getAllCustomRegexesMock).not.toHaveBeenCalled();
-            expect(deleteCustomRegexMock).not.toHaveBeenCalled();
+            expect(getAllCustomPatternsMock).not.toHaveBeenCalled();
+            expect(deleteCustomPatternMock).not.toHaveBeenCalled();
             expect(recreateDecorationMock).not.toHaveBeenCalled();
         });
 
-        it('should show message when no custom regexes exist', async () => {
-            getAllCustomRegexesMock.mockReturnValue([]);
+        it('should show message when no custom patterns exist', async () => {
+            getAllCustomPatternsMock.mockReturnValue([]);
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
-            expect(showInformationMessageMock).toHaveBeenCalledWith('No custom regexes found to delete.');
+            expect(showInformationMessageMock).toHaveBeenCalledWith('No custom patterns found to delete.');
             expect(showQuickPickMock).not.toHaveBeenCalled();
-            expect(deleteCustomRegexMock).not.toHaveBeenCalled();
+            expect(deleteCustomPatternMock).not.toHaveBeenCalled();
             expect(recreateDecorationMock).not.toHaveBeenCalled();
         });
 
         it('should not delete when user cancels selection', async () => {
             showQuickPickMock.mockResolvedValue(undefined);
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
-            expect(deleteCustomRegexMock).not.toHaveBeenCalled();
+            expect(deleteCustomPatternMock).not.toHaveBeenCalled();
             expect(recreateDecorationMock).not.toHaveBeenCalled();
             expect(showInformationMessageMock).not.toHaveBeenCalledWith(expect.stringContaining('deleted'));
         });
 
-        it('should handle multiple custom regexes', async () => {
-            getAllCustomRegexesMock.mockReturnValue([
-                { name: 'regex1', pattern: 'pattern1', language: 'javascript' },
-                { name: 'regex2', pattern: 'pattern2', language: 'typescript' },
-                { name: 'regex3', pattern: 'pattern3', language: 'go' },
+        it('should handle multiple custom patterns', async () => {
+            getAllCustomPatternsMock.mockReturnValue([
+                { name: 'pattern1', pattern: 'pattern1', language: 'javascript' },
+                { name: 'pattern2', pattern: 'pattern2', language: 'typescript' },
+                { name: 'pattern3', pattern: 'pattern3', language: 'go' },
             ]);
-            showQuickPickMock.mockResolvedValue('regex2');
+            showQuickPickMock.mockResolvedValue('pattern2');
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
-            expect(deleteCustomRegexMock).toHaveBeenCalledWith('regex2');
-            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom regex "regex2" deleted.');
+            expect(deleteCustomPatternMock).toHaveBeenCalledWith('pattern2');
+            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom pattern "pattern2" deleted.');
         });
 
         it('should execute functions in correct order', async () => {
             const callOrder: string[] = [];
 
-            showQuickPickMock.mockResolvedValue('myRegex');
-            deleteCustomRegexMock.mockImplementation(() => {
+            showQuickPickMock.mockResolvedValue('myPattern');
+            deleteCustomPatternMock.mockImplementation(() => {
                 callOrder.push('delete');
             });
             recreateDecorationMock.mockImplementation(() => {
@@ -134,7 +134,7 @@ describe('deleteCustomRegexCommand', () => {
                 callOrder.push('confirm');
             });
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
             expect(callOrder).toEqual(['delete', 'recreate', 'confirm']);
         });
@@ -144,58 +144,58 @@ describe('deleteCustomRegexCommand', () => {
         it('should display quick pick with correct placeholder', async () => {
             showQuickPickMock.mockResolvedValue(undefined);
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
-            expect(showQuickPickMock).toHaveBeenCalledWith(['myRegex', 'goLog'], {
-                placeHolder: 'Select a custom regex to delete.',
+            expect(showQuickPickMock).toHaveBeenCalledWith(['myPattern', 'goLog'], {
+                placeHolder: 'Select a custom pattern to delete.',
             });
         });
 
-        it('should display all available custom regex names', async () => {
-            getAllCustomRegexesMock.mockReturnValue([
-                { name: 'regex1', pattern: 'pattern1', language: 'javascript' },
-                { name: 'regex2', pattern: 'pattern2', language: 'typescript' },
-                { name: 'regex3', pattern: 'pattern3', language: 'go' },
+        it('should display all available custom pattern names', async () => {
+            getAllCustomPatternsMock.mockReturnValue([
+                { name: 'pattern1', pattern: 'pattern1', language: 'javascript' },
+                { name: 'pattern2', pattern: 'pattern2', language: 'typescript' },
+                { name: 'pattern3', pattern: 'pattern3', language: 'go' },
             ]);
             showQuickPickMock.mockResolvedValue(undefined);
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
-            expect(showQuickPickMock).toHaveBeenCalledWith(['regex1', 'regex2', 'regex3'], {
-                placeHolder: 'Select a custom regex to delete.',
+            expect(showQuickPickMock).toHaveBeenCalledWith(['pattern1', 'pattern2', 'pattern3'], {
+                placeHolder: 'Select a custom pattern to delete.',
             });
         });
 
-        it('should handle single custom regex', async () => {
-            getAllCustomRegexesMock.mockReturnValue([
-                { name: 'onlyRegex', pattern: 'pattern', language: 'javascript' },
+        it('should handle single custom pattern', async () => {
+            getAllCustomPatternsMock.mockReturnValue([
+                { name: 'onlyPattern', pattern: 'pattern', language: 'javascript' },
             ]);
-            showQuickPickMock.mockResolvedValue('onlyRegex');
+            showQuickPickMock.mockResolvedValue('onlyPattern');
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
-            expect(showQuickPickMock).toHaveBeenCalledWith(['onlyRegex'], {
-                placeHolder: 'Select a custom regex to delete.',
+            expect(showQuickPickMock).toHaveBeenCalledWith(['onlyPattern'], {
+                placeHolder: 'Select a custom pattern to delete.',
             });
-            expect(deleteCustomRegexMock).toHaveBeenCalledWith('onlyRegex');
+            expect(deleteCustomPatternMock).toHaveBeenCalledWith('onlyPattern');
         });
     });
 
-    describe('showDeleteRegexConfirmation', () => {
-        it('should show message with deleted regex name', async () => {
-            showQuickPickMock.mockResolvedValue('customRegex');
+    describe('showDeletePatternConfirmation', () => {
+        it('should show message with deleted pattern name', async () => {
+            showQuickPickMock.mockResolvedValue('customPattern');
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
-            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom regex "customRegex" deleted.');
+            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom pattern "customPattern" deleted.');
         });
 
-        it('should show correct message for different regex names', async () => {
-            showQuickPickMock.mockResolvedValue('anotherRegex');
+        it('should show correct message for different pattern names', async () => {
+            showQuickPickMock.mockResolvedValue('anotherPattern');
 
-            await handleDeleteCustomRegexCommand();
+            await handleDeleteCustomPatternCommand();
 
-            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom regex "anotherRegex" deleted.');
+            expect(showInformationMessageMock).toHaveBeenCalledWith('Custom pattern "anotherPattern" deleted.');
         });
     });
 });

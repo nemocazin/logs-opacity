@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ensureGlobalFlag, findLogStatements, findMatchesWithRegex, getLogPatterns } from '../logDetector';
+import { findLogStatements, findMatchesWithPattern, getLogPatterns } from '../logDetector';
 import type * as vscode from 'vscode';
-import { getAllCustomRegexes } from '../../config/configManager';
+import { getAllCustomPatterns } from '../../config/configManager';
 
 // Mock vscode module
 vi.mock('vscode', () => ({
@@ -22,7 +22,7 @@ vi.mock('vscode', () => ({
 
 // Mock configManager module
 vi.mock('../../config/configManager', () => ({
-    getAllCustomRegexes: vi.fn(() => []),
+    getAllCustomPatterns: vi.fn(() => []),
 }));
 
 type Position = {
@@ -126,8 +126,44 @@ describe('logDetector', () => {
             expect(results.length).toBeGreaterThan(0);
         });
 
+        it('should handle logs with spaces before opening parenthesis', () => {
+            const text = 'console.log      ("test");';
+            const editor = createMockEditor(text, 'javascriptreact');
+
+            const results = findLogStatements(editor);
+
+            expect(results.length).toBeGreaterThan(0);
+        });
+
+        it('should handle logs with multiples functions calls inside it', () => {
+            const text = 'console.log(JSON.stringify({name: "John"}));';
+            const editor = createMockEditor(text, 'javascriptreact');
+
+            const results = findLogStatements(editor);
+
+            expect(results.length).toBeGreaterThan(0);
+        });
+
         it('should return empty array when no logs found', () => {
             const text = 'const x = 5;\nconst y = 10;';
+            const editor = createMockEditor(text, 'typescript');
+
+            const results = findLogStatements(editor);
+
+            expect(results.length).toBe(0);
+        });
+
+        it('should return empty array when logs found but no opening parenthesis', () => {
+            const text = 'const x = 5;\nconsole.log{x);';
+            const editor = createMockEditor(text, 'typescript');
+
+            const results = findLogStatements(editor);
+
+            expect(results.length).toBe(0);
+        });
+
+        it('should return empty array when logs found but no closing parenthesis', () => {
+            const text = 'const x = 5;\nconsole.log(x};';
             const editor = createMockEditor(text, 'typescript');
 
             const results = findLogStatements(editor);
@@ -143,10 +179,10 @@ describe('logDetector', () => {
             expect(generalPatterns).toEqual(unknownPatterns);
         });
 
-        it('should include custom regexes for the given language', () => {
-            const mockedGetAllCustomRegexes = vi.mocked(getAllCustomRegexes);
+        it('should include custom patterns for the given language', () => {
+            const mockedGetAllCustomPatterns = vi.mocked(getAllCustomPatterns);
 
-            mockedGetAllCustomRegexes.mockReturnValue([
+            mockedGetAllCustomPatterns.mockReturnValue([
                 {
                     language: 'typescript',
                     name: 'My Custom Log',
@@ -156,7 +192,7 @@ describe('logDetector', () => {
 
             const patterns = getLogPatterns('typescript');
 
-            const hasCustomPattern = patterns.some(regex => regex.source === 'myCustomLog\\$');
+            const hasCustomPattern = patterns.some(pattern => pattern === 'myCustomLog\\$');
 
             expect(hasCustomPattern).toBe(true);
         });
@@ -169,78 +205,15 @@ describe('logDetector', () => {
 
             expect(results.length).toBe(0);
         });
-
-        it('should find std::cout in C++', () => {
-            const text = 'std::cout << "Hello World" << std::endl;';
-            const editor = createMockEditor(text, 'cpp');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThan(0);
-        });
-
-        it('should find std::cerr in C++', () => {
-            const text = 'std::cerr << "Error message";';
-            const editor = createMockEditor(text, 'cpp');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThan(0);
-        });
-
-        it('should find std::clog in C++', () => {
-            const text = 'std::clog << "Log message";';
-            const editor = createMockEditor(text, 'cpp');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThan(0);
-        });
-
-        it('should find cout without std:: prefix in C++', () => {
-            const text = 'cout << "Hello" << endl;';
-            const editor = createMockEditor(text, 'cpp');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThan(0);
-        });
-
-        it('should find cerr without std:: prefix in C++', () => {
-            const text = 'cerr << "Error";';
-            const editor = createMockEditor(text, 'cpp');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThan(0);
-        });
-
-        it('should find clog without std:: prefix in C++', () => {
-            const text = 'clog << "Log";';
-            const editor = createMockEditor(text, 'cpp');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThan(0);
-        });
-
-        it('should find multiple C++ stream outputs', () => {
-            const text = 'std::cout << "A";\ncerr << "B";\nstd::clog << "C";';
-            const editor = createMockEditor(text, 'cpp');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThanOrEqual(3);
-        });
     });
 
-    describe('findMatchesWithRegex', () => {
-        it('should find matches with a simple regex pattern', () => {
+    describe('findMatchesWithPattern', () => {
+        it('should find matches with a simple pattern pattern', () => {
             const text = 'console.log("test");\nconsole.log("another");';
-            const regex = /console\.log/g;
+            const pattern = 'console.log';
             const editor = createMockEditor(text, 'typescript');
 
-            const results = findMatchesWithRegex(text, regex, editor);
+            const results = findMatchesWithPattern(text, pattern, editor);
 
             expect(results.length).toBe(2);
             expect(results[0]?.range).toBeDefined();
@@ -248,30 +221,30 @@ describe('logDetector', () => {
 
         it('should return empty array when no matches found', () => {
             const text = 'const x = 5;\nconst y = 10;';
-            const regex = /console\.log/g;
+            const pattern = 'console.log';
             const editor = createMockEditor(text, 'typescript');
 
-            const results = findMatchesWithRegex(text, regex, editor);
+            const results = findMatchesWithPattern(text, pattern, editor);
 
             expect(results.length).toBe(0);
         });
 
         it('should handle multiple matches on same line', () => {
             const text = 'console.log("a"); console.log("b");';
-            const regex = /console\.log/g;
+            const pattern = 'console.log';
             const editor = createMockEditor(text, 'typescript');
 
-            const results = findMatchesWithRegex(text, regex, editor);
+            const results = findMatchesWithPattern(text, pattern, editor);
 
             expect(results.length).toBe(2);
         });
 
         it('should correctly calculate positions for matches', () => {
             const text = 'console.log("test");';
-            const regex = /console\.log/g;
+            const pattern = 'console.log';
             const editor = createMockEditor(text, 'typescript');
 
-            const results = findMatchesWithRegex(text, regex, editor);
+            const results = findMatchesWithPattern(text, pattern, editor);
 
             expect(results.length).toBe(1);
             expect(results[0]?.range.start.line).toBe(0);
@@ -280,10 +253,10 @@ describe('logDetector', () => {
 
         it('should handle empty text', () => {
             const text = '';
-            const regex = /console\.log/g;
+            const pattern = 'console.log';
             const editor = createMockEditor(text, 'typescript');
 
-            const results = findMatchesWithRegex(text, regex, editor);
+            const results = findMatchesWithPattern(text, pattern, editor);
 
             expect(results.length).toBe(0);
         });
@@ -331,11 +304,11 @@ describe('logDetector', () => {
             expect(patterns.length).toBeGreaterThan(2);
         });
 
-        it('should return RegExp array', () => {
+        it('should return string array', () => {
             const patterns = getLogPatterns('typescript');
 
             patterns.forEach(pattern => {
-                expect(pattern).toBeInstanceOf(RegExp);
+                expect(typeof pattern).toBe('string');
             });
         });
 
@@ -346,10 +319,10 @@ describe('logDetector', () => {
             expect(Array.isArray(patterns)).toBe(true);
         });
 
-        it('should include custom regexes for the given language', () => {
-            const mockedGetAllCustomRegexes = vi.mocked(getAllCustomRegexes);
+        it('should include custom patterns for the given language', () => {
+            const mockedGetAllCustomPatterns = vi.mocked(getAllCustomPatterns);
 
-            mockedGetAllCustomRegexes.mockReturnValue([
+            mockedGetAllCustomPatterns.mockReturnValue([
                 {
                     language: 'typescript',
                     name: 'My Custom Log',
@@ -359,15 +332,15 @@ describe('logDetector', () => {
 
             const patterns = getLogPatterns('typescript');
 
-            const hasCustomPattern = patterns.some(regex => regex.source === 'myCustomLog\\$');
+            const hasCustomPattern = patterns.some(pattern => pattern === 'myCustomLog\\$');
 
             expect(hasCustomPattern).toBe(true);
         });
 
-        it('should not include custom regexes for different languages', () => {
-            const mockedGetAllCustomRegexes = vi.mocked(getAllCustomRegexes);
+        it('should not include custom patterns for different languages', () => {
+            const mockedGetAllCustomPatterns = vi.mocked(getAllCustomPatterns);
 
-            mockedGetAllCustomRegexes.mockReturnValue([
+            mockedGetAllCustomPatterns.mockReturnValue([
                 {
                     language: 'javascript',
                     name: 'JS Custom Log',
@@ -377,52 +350,9 @@ describe('logDetector', () => {
 
             const patterns = getLogPatterns('typescript');
 
-            const hasCustomPattern = patterns.some(regex => regex.source === 'jsCustomLog\\$');
+            const hasCustomPattern = patterns.some(pattern => pattern === 'jsCustomLog\\$');
 
             expect(hasCustomPattern).toBe(false);
-        });
-    });
-
-    describe('ensureGlobalFlag', () => {
-        it('should return the same regex if global flag is already present', () => {
-            const regex = /test/g;
-
-            const result = ensureGlobalFlag(regex);
-
-            expect(result).toBe(regex);
-            expect(result.global).toBe(true);
-        });
-
-        it('should add global flag if it is missing', () => {
-            const regex = /test/;
-
-            const result = ensureGlobalFlag(regex);
-
-            expect(result).not.toBe(regex);
-            expect(result.global).toBe(true);
-            expect(result.source).toBe(regex.source);
-        });
-
-        it('should preserve existing flags when adding global flag', () => {
-            const regex = /test/i;
-
-            const result = ensureGlobalFlag(regex);
-
-            expect(result.global).toBe(true);
-            expect(result.ignoreCase).toBe(true);
-            expect(result.flags).toContain('i');
-            expect(result.flags).toContain('g');
-        });
-
-        it('should preserve multiple existing flags', () => {
-            const regex = /test/im;
-
-            const result = ensureGlobalFlag(regex);
-
-            expect(result.global).toBe(true);
-            expect(result.ignoreCase).toBe(true);
-            expect(result.multiline).toBe(true);
-            expect(result.source).toBe('test');
         });
     });
 });

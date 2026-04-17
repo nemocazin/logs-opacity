@@ -33,12 +33,12 @@
                 "title": "Unobtrusive Logs: Change Color"
             },
             {
-                "command": "unobtrusive-logs.addCustomRegex",
-                "title": "Unobtrusive Logs: Add Custom Regex"
+                "command": "unobtrusive-logs.addCustomPattern",
+                "title": "Unobtrusive Logs: Add Custom Pattern"
             },
             {
-                "command": "unobtrusive-logs.deleteCustomRegex",
-                "title": "Unobtrusive Logs: Delete Custom Regex"
+                "command": "unobtrusive-logs.deleteCustomPattern",
+                "title": "Unobtrusive Logs: Delete Custom Pattern"
             }
         ],
         "configuration": {
@@ -62,24 +62,24 @@
                     "description": "Color used for logs.",
                     "format": "color"
                 },
-                "unobtrusive-logs.custom-regexes": {
+                "unobtrusive-logs.custom-patterns": {
                     "type": "array",
                     "default": [],
-                    "description": "Custom regexes.",
+                    "description": "Custom patterns.",
                     "items": {
                         "type": "object",
                         "properties": {
                             "language": {
                                 "type": "string",
-                                "description": "Language for the regex."
+                                "description": "Language for the pattern."
                             },
                             "name": {
                                 "type": "string",
-                                "description": "Name of the custom regex."
+                                "description": "Name of the custom pattern."
                             },
                             "pattern": {
                                 "type": "string",
-                                "description": "Regex pattern."
+                                "description": "Pattern."
                             }
                         },
                         "required": [

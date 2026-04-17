@@ -2,8 +2,8 @@ import * as vscode from 'vscode';
 import { handleChangeOpacityCommand } from './changeOpacityCommand';
 import { handleChangeColorCommand } from './changeColorCommand';
 import { handleToggleCommand } from './toggleCommand';
-import { handleAddCustomRegexCommand } from './addRegexCommand';
-import { handleDeleteCustomRegexCommand } from './deleteRegexCommands';
+import { handleAddCustomPatternCommand } from './addPatternCommand';
+import { handleDeleteCustomPatternCommand } from './deletePatternCommands';
 
 /**
  * Registers all commands for the extension.
@@ -23,19 +23,19 @@ export function registerCommands(context: vscode.ExtensionContext): void {
         handleChangeColorCommand,
     );
 
-    const addCustomRegexCommand = vscode.commands.registerCommand(
-        'unobtrusive-logs.addCustomRegex',
-        handleAddCustomRegexCommand,
+    const addCustomPatternCommand = vscode.commands.registerCommand(
+        'unobtrusive-logs.addCustomPattern',
+        handleAddCustomPatternCommand,
     );
 
-    const deleteCustomRegexCommand = vscode.commands.registerCommand(
-        'unobtrusive-logs.deleteCustomRegex',
-        handleDeleteCustomRegexCommand,
+    const deleteCustomPatternCommand = vscode.commands.registerCommand(
+        'unobtrusive-logs.deleteCustomPattern',
+        handleDeleteCustomPatternCommand,
     );
 
     context.subscriptions.push(toggleCommand);
     context.subscriptions.push(changeOpacityCommand);
     context.subscriptions.push(changeColorCommand);
-    context.subscriptions.push(addCustomRegexCommand);
-    context.subscriptions.push(deleteCustomRegexCommand);
+    context.subscriptions.push(addCustomPatternCommand);
+    context.subscriptions.push(deleteCustomPatternCommand);
 }

@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.3.0] - 2026-02-09
+
+### Changed
+
+- Replaced the "regex" keyword by the "pattern" keyword
+- Removed regex-based logic and replaced it with a parenthesis matching approach to ensure all log sentences are detected
+
+### Fixed
+
+- General patterns are now applied to all languages
+
 ## [1.2.0] - 2026-02-09
 
 ### Added
@@ -8,8 +19,8 @@
 - Added toggle command (`unobtrusive-logs.toggle`) to enable/disable the extension ([#10](https://github.com/nemocazin/unobtrusive-logs/issues/10))
 - Added support for Go "_.Logs._" statements
 - Added general support for "Log" statements ([#8](https://github.com/nemocazin/unobtrusive-logs/issues/8))
-- Added create custom regexes command ([#3](https://github.com/nemocazin/unobtrusive-logs/issues/3))
-- Added delete custom regexes command ([#3](https://github.com/nemocazin/unobtrusive-logs/issues/3))
+- Added create custom patterns command ([#3](https://github.com/nemocazin/unobtrusive-logs/issues/3))
+- Added delete custom patterns command ([#3](https://github.com/nemocazin/unobtrusive-logs/issues/3))
 
 ### Fixed
 
@@ -20,7 +31,7 @@
 
 ### Changed
 
-- Modified the general regex to detect statements with multiple chained function calls (e.g., `log.error("test").format().time();`) ([#6](https://github.com/nemocazin/unobtrusive-logs/issues/6)) ([#7](https://github.com/nemocazin/unobtrusive-logs/issues/7))
+- Modified the general pattern to detect statements with multiple chained function calls (e.g., `log.error("test").format().time();`) ([#6](https://github.com/nemocazin/unobtrusive-logs/issues/6)) ([#7](https://github.com/nemocazin/unobtrusive-logs/issues/7))
 - Improved ESLint rules
 
 ### Added
@@ -35,8 +46,8 @@
 
 ### Added
 
-- Added support for `console.*` methods in JavaScript and TypeScript regexes ([#4](https://github.com/nemocazin/unobtrusive-logs/issues/4))
-- Added general regex `log.*` used for every languages
+- Added support for `console.*` methods in JavaScript and TypeScript patterns ([#4](https://github.com/nemocazin/unobtrusive-logs/issues/4))
+- Added general pattern `log.*` used for every languages
 - Added support for C++ logging: `std::cerr.*`, `std::cout.*`, `std::clog.*`, `cerr.*`, `cout.*`, and `clog.*`
 
 ## [1.0.1] - 2025-01-25

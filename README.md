@@ -23,7 +23,7 @@ _After: Unobtrusive logs enabled_
 
 - Customizable opacity for log statements (0-100%)
 - Configurable color for log statements
-- Creation of custom regexes for log statements
+- Creation of custom patterns for log statements
 - Support generic logs and languages specifics logs (more languages coming soon)
 - Simple commands for quick adjustments
 
@@ -36,8 +36,8 @@ The extension is enabled by default when you open VS Code. It will apply the con
 - `unobtrusive-logs.toggle`: Toggle On/Off the extension
 - `unobtrusive-logs.changeOpacity`: Change the opacity level of log statements
 - `unobtrusive-logs.changeColor`: Change the color of log statements
-- `unobtrusive-logs.addCustomRegex`: Add a custom regex
-- `unobtrusive-logs.deleteCustomRegex`: Delete a custom regex
+- `unobtrusive-logs.addCustomPattern`: Add a custom pattern
+- `unobtrusive-logs.deleteCustomPattern`: Delete a custom pattern
 
 ### Configuration
 
@@ -46,18 +46,18 @@ You can configure the extension in VS Code settings:
 - `unobtrusive-logs.toggle`: Activate or no the extension
 - `unobtrusive-logs.opacity`: Opacity level for logs _(0 to 100, default: 50)_
 - `unobtrusive-logs.color`: Color used for logs _(default: #808080)_
-- `unobtrusive-logs.custom-regexes`: Custom regexes _({language: string, name: string, pattern: string})_
+- `unobtrusive-logs.custom-patterns`: Custom patterns _({language: string, name: string, pattern: string})_
 
-### Create a custom regex
+### Create a custom pattern
 
-If you want to implement your custom regex for specific statements, you need to use the command `unobtrusive-logs.addCustomRegex`.
-Then they will ask to select a language, to name the regex and to write the regex formula.
+If you want to implement your custom pattern for specific statements, you need to use the command `unobtrusive-logs.addCustomPattern`.
+Then they will ask to select a language, to name the pattern and to write the pattern formula.
 
 Example:
 
 ```typescript
-console\.help\(([\s\S]*?)\);?   // Regex for the following log statement
-console.help("I need help for this regex !")
+// Write <console.help> in the input of the addCustomPattern command
+console.help('I need help for this pattern !'); // This sentence should be find
 ```
 
 ## Contact
