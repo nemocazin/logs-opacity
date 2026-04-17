@@ -126,8 +126,44 @@ describe('logDetector', () => {
             expect(results.length).toBeGreaterThan(0);
         });
 
+        it('should handle logs with spaces before opening parenthesis', () => {
+            const text = 'console.log      ("test");';
+            const editor = createMockEditor(text, 'javascriptreact');
+
+            const results = findLogStatements(editor);
+
+            expect(results.length).toBeGreaterThan(0);
+        });
+
+        it('should handle logs with multiples functions calls inside it', () => {
+            const text = 'console.log(JSON.stringify({name: "John"}));';
+            const editor = createMockEditor(text, 'javascriptreact');
+
+            const results = findLogStatements(editor);
+
+            expect(results.length).toBeGreaterThan(0);
+        });
+
         it('should return empty array when no logs found', () => {
             const text = 'const x = 5;\nconst y = 10;';
+            const editor = createMockEditor(text, 'typescript');
+
+            const results = findLogStatements(editor);
+
+            expect(results.length).toBe(0);
+        });
+
+        it('should return empty array when logs found but no opening parenthesis', () => {
+            const text = 'const x = 5;\nconsole.log{x);';
+            const editor = createMockEditor(text, 'typescript');
+
+            const results = findLogStatements(editor);
+
+            expect(results.length).toBe(0);
+        });
+
+        it('should return empty array when logs found but no closing parenthesis', () => {
+            const text = 'const x = 5;\nconsole.log(x};';
             const editor = createMockEditor(text, 'typescript');
 
             const results = findLogStatements(editor);

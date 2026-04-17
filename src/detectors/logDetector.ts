@@ -146,7 +146,7 @@ export function getLogPatterns(languageId: string): string[] {
     // Get all patterns: language-specific, custom patterns for the language, and general patterns
     const languagePatterns = patternKey ? LOG_PATTERNS[patternKey] : [];
     const customPatterns = getAllCustomPatterns()
-        .filter(pattern => pattern.language === languageId)
+        .filter(pattern => pattern.language === languageId || pattern.language === 'general')
         .map(pattern => pattern.pattern);
     const generalPatterns = LOG_PATTERNS.general;
 
