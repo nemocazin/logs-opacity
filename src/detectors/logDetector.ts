@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { LOG_PATTERNS } from './patterns';
 import { getAllCustomPatterns } from '../config/configManager';
+import { findClosingParenthesis, findOpeningParenthesis } from './parser';
 
 /**
  * Finds log statements in the given text editor based on predefined patterns.
@@ -66,49 +67,6 @@ export function findMatchesWithPattern(
     }
 
     return logRanges;
-}
-
-/**
- * @brief Finds the index of the opening parenthesis following the search pattern, ignoring whitespace.
- *
- * @param text The text to search within.
- * @param startIndex The index where the search pattern was found.
- * @param search The search pattern that was found.
- * @returns The index of the opening parenthesis if found, otherwise -1.
- */
-function findOpeningParenthesis(text: string, startIndex: number, search: string): number {
-    let checkIndex = startIndex + search.length;
-
-    while (checkIndex < text.length) {
-        const char = text[checkIndex];
-        if (char === undefined || !/\s/.test(char)) break;
-        checkIndex++;
-    }
-
-    return text[checkIndex] === '(' ? checkIndex : -1;
-}
-
-/**
- * @brief Finds the index of the closing parenthesis corresponding to the opening one, handling nested parentheses.
- *
- * @param text The text to search within.
- * @param openParenIndex The index of the opening parenthesis.
- * @returns The index of the closing parenthesis if found, otherwise -1.
- */
-function findClosingParenthesis(text: string, openParenIndex: number): number {
-    let currentIndex = openParenIndex + 1;
-    let depth = 1;
-
-    while (currentIndex < text.length && depth > 0) {
-        const char = text[currentIndex];
-
-        if (char === '(') depth++;
-        else if (char === ')') depth--;
-
-        currentIndex++;
-    }
-
-    return depth === 0 ? currentIndex : -1;
 }
 
 /**
