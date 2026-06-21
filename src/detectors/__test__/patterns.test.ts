@@ -38,6 +38,8 @@ describe('Log Patterns', () => {
                         'log.info("test");',
                         'log.info(JSON.stringify({name: "John"}));',
                         'log.info     (JSON.stringify(obj));',
+                        'log.info().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'log.info().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -47,6 +49,8 @@ describe('Log Patterns', () => {
                         'log.debug("test");',
                         'log.debug(JSON.stringify({name: "John"}));',
                         'log.debug     (JSON.stringify(obj));',
+                        'log.debug().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'log.debug().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -56,6 +60,8 @@ describe('Log Patterns', () => {
                         'log.verbose("test");',
                         'log.verbose(JSON.stringify({name: "John"}));',
                         'log.verbose     (JSON.stringify(obj));',
+                        'log.verbose().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'log.verbose().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -65,6 +71,8 @@ describe('Log Patterns', () => {
                         'log.warn("test");',
                         'log.warn(JSON.stringify({name: "John"}));',
                         'log.warn     (JSON.stringify(obj));',
+                        'log.warn().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'log.warn().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -74,6 +82,8 @@ describe('Log Patterns', () => {
                         'log.error("test");',
                         'log.error(JSON.stringify({name: "John"}));',
                         'log.error     (JSON.stringify(obj));',
+                        'log.error().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'log.error().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -83,6 +93,8 @@ describe('Log Patterns', () => {
                         'log.fatal("test");',
                         'log.fatal(JSON.stringify({name: "John"}));',
                         'log.fatal     (JSON.stringify(obj));',
+                        'log.fatal().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'log.fatal().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -92,6 +104,8 @@ describe('Log Patterns', () => {
                         'log.panic("test");',
                         'log.panic(JSON.stringify({name: "John"}));',
                         'log.panic     (JSON.stringify(obj));',
+                        'log.panic().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'log.panic().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -101,6 +115,8 @@ describe('Log Patterns', () => {
                         'Log.info("test");',
                         'Log.info(JSON.stringify({name: "John"}));',
                         'Log.info     (JSON.stringify(obj));',
+                        'Log.info().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'Log.info().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -110,6 +126,8 @@ describe('Log Patterns', () => {
                         'Log.debug("test");',
                         'Log.debug(JSON.stringify({name: "John"}));',
                         'Log.debug     (JSON.stringify(obj));',
+                        'Log.debug().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'Log.debug().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -119,6 +137,8 @@ describe('Log Patterns', () => {
                         'Log.verbose("test");',
                         'Log.verbose(JSON.stringify({name: "John"}));',
                         'Log.verbose     (JSON.stringify(obj));',
+                        'Log.verbose().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'Log.verbose().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -128,6 +148,8 @@ describe('Log Patterns', () => {
                         'Log.warn("test");',
                         'Log.warn(JSON.stringify({name: "John"}));',
                         'Log.warn     (JSON.stringify(obj));',
+                        'Log.warn().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'Log.warn().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -137,6 +159,8 @@ describe('Log Patterns', () => {
                         'Log.error("test");',
                         'Log.error(JSON.stringify({name: "John"}));',
                         'Log.error     (JSON.stringify(obj));',
+                        'Log.error().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'Log.error().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -146,6 +170,8 @@ describe('Log Patterns', () => {
                         'Log.fatal("test");',
                         'Log.fatal(JSON.stringify({name: "John"}));',
                         'Log.fatal     (JSON.stringify(obj));',
+                        'Log.fatal().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'Log.fatal().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -155,6 +181,8 @@ describe('Log Patterns', () => {
                         'Log.panic("test");',
                         'Log.panic(JSON.stringify({name: "John"}));',
                         'Log.panic     (JSON.stringify(obj));',
+                        'Log.panic().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'Log.panic().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
             ],
@@ -170,6 +198,8 @@ describe('Log Patterns', () => {
                         'logger.Info("test")',
                         'logger.Info(JSON.stringify({name: "John"}));',
                         'logger.Info     (JSON.stringify(obj));',
+                        'logger.Info().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'logger.Info().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -179,6 +209,8 @@ describe('Log Patterns', () => {
                         'logger.Debug("debug")',
                         'logger.Debug(JSON.stringify({name: "John"}));',
                         'logger.Debug     (JSON.stringify(obj));',
+                        'logger.Debug().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'logger.Debug().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -188,6 +220,8 @@ describe('Log Patterns', () => {
                         'logger.Error("error")',
                         'logger.Error(JSON.stringify({name: "John"}));',
                         'logger.Error     (JSON.stringify(obj));',
+                        'logger.Error().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'logger.Error().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -197,6 +231,8 @@ describe('Log Patterns', () => {
                         'logger.Warn("warning")',
                         'logger.Warn(JSON.stringify({name: "John"}));',
                         'logger.Warn     (JSON.stringify(obj));',
+                        'logger.Warn().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'logger.Warn().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -206,6 +242,8 @@ describe('Log Patterns', () => {
                         'logger.Trace("trace")',
                         'logger.Trace(JSON.stringify({name: "John"}));',
                         'logger.Trace     (JSON.stringify(obj));',
+                        'logger.Trace().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'logger.Trace().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -215,6 +253,8 @@ describe('Log Patterns', () => {
                         'logger.Fatal("fatal")',
                         'logger.Fatal(JSON.stringify({name: "John"}));',
                         'logger.Fatal     (JSON.stringify(obj));',
+                        'logger.Fatal().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'logger.Fatal().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -224,6 +264,8 @@ describe('Log Patterns', () => {
                         'logger.Panic("panic")',
                         'logger.Panic(JSON.stringify({name: "John"}));',
                         'logger.Panic     (JSON.stringify(obj));',
+                        'logger.Panic().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'logger.Panic().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
             ],
@@ -239,6 +281,8 @@ describe('Log Patterns', () => {
                         'console.log("test");',
                         'console.log(JSON.stringify({name: "John"}));',
                         'console.log     (JSON.stringify(obj));',
+                        'console.log().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.log().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -248,6 +292,8 @@ describe('Log Patterns', () => {
                         'console.error("test");',
                         'console.error(JSON.stringify({name: "John"}));',
                         'console.error     (JSON.stringify(obj));',
+                        'console.error().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.error().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -257,6 +303,8 @@ describe('Log Patterns', () => {
                         'console.warn("test");',
                         'console.warn(JSON.stringify({name: "John"}));',
                         'console.warn     (JSON.stringify(obj));',
+                        'console.warn().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.warn().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -266,6 +314,8 @@ describe('Log Patterns', () => {
                         'console.info("test");',
                         'console.info(JSON.stringify({name: "John"}));',
                         'console.info     (JSON.stringify(obj));',
+                        'console.info().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.info().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -275,6 +325,8 @@ describe('Log Patterns', () => {
                         'console.debug("test");',
                         'console.debug(JSON.stringify({name: "John"}));',
                         'console.debug     (JSON.stringify(obj));',
+                        'console.debug().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.debug().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -284,6 +336,8 @@ describe('Log Patterns', () => {
                         'console.trace("test");',
                         'console.trace(JSON.stringify({name: "John"}));',
                         'console.trace     (JSON.stringify(obj));',
+                        'console.trace().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.trace().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
             ],
@@ -299,6 +353,8 @@ describe('Log Patterns', () => {
                         'console.log("test");',
                         'console.log(JSON.stringify({name: "John"}));',
                         'console.log     (JSON.stringify(obj));',
+                        'console.log().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.log().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -308,6 +364,8 @@ describe('Log Patterns', () => {
                         'console.error("test");',
                         'console.error(JSON.stringify({name: "John"}));',
                         'console.error     (JSON.stringify(obj));',
+                        'console.error().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.error().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -317,6 +375,8 @@ describe('Log Patterns', () => {
                         'console.warn("test");',
                         'console.warn(JSON.stringify({name: "John"}));',
                         'console.warn     (JSON.stringify(obj));',
+                        'console.warn().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.warn().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -326,6 +386,8 @@ describe('Log Patterns', () => {
                         'console.info("test");',
                         'console.info(JSON.stringify({name: "John"}));',
                         'console.info     (JSON.stringify(obj));',
+                        'console.info().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.info().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -335,6 +397,8 @@ describe('Log Patterns', () => {
                         'console.debug("test");',
                         'console.debug(JSON.stringify({name: "John"}));',
                         'console.debug     (JSON.stringify(obj));',
+                        'console.debug().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.debug().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
                 {
@@ -344,6 +408,8 @@ describe('Log Patterns', () => {
                         'console.trace("test");',
                         'console.trace(JSON.stringify({name: "John"}));',
                         'console.trace     (JSON.stringify(obj));',
+                        'console.trace().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test");',
+                        'console.trace().Str("value :", value).Any("obj", {bar: 1, foo: 10}).Msg("Test")',
                     ],
                 },
             ],
