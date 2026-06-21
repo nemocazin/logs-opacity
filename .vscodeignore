@@ -1,4 +1,5 @@
 .vscode/**
+coverage/**
 .github/**
 src/**
 **/__test__/**
