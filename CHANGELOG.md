@@ -1,6 +1,16 @@
 # Changelog
 
-## [1.3.0] - 2026-02-09
+## [1.4.0] - 2026-06-21
+
+### Added
+
+- Added detection of logs with chained methods
+
+### Changed
+
+- Improved pattern detection accuracy
+
+## [1.3.0] - 2026-04-17
 
 ### Changed
 
