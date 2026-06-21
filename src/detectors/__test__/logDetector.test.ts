@@ -78,281 +78,252 @@ function createMockEditor(text: string, languageId: string): vscode.TextEditor {
     return mockEditor as vscode.TextEditor;
 }
 
-describe('logDetector', () => {
-    describe('findLogStatements', () => {
-        it('should match general log patterns (e.g., log.*)', () => {
-            const text = 'log.info("general log");\nlog.debug("debug log");';
-            const editor = createMockEditor(text, 'typescript');
+describe('findLogStatements', () => {
+    it.each([
+        {
+            name: 'detects general log patterns (log.*)',
+            text: 'log.info("general log");\nlog.debug("debug log");',
+            languageId: 'typescript',
+            assertion: (results: ReturnType<typeof findLogStatements>) => {
+                expect(results.length).toBeGreaterThanOrEqual(2);
+            },
+        },
+        {
+            name: 'finds console.log in TypeScript',
+            text: 'const x = 5;\nconsole.log(x);\nconst y = 10;',
+            languageId: 'typescript',
+            assertion: (results: ReturnType<typeof findLogStatements>) => {
+                expect(results.length).toBeGreaterThan(0);
+                expect(results[0]?.range).toBeDefined();
+            },
+        },
+        {
+            name: 'finds multiple log statements in JavaScript',
+            text: 'console.log("a");\nconsole.error("b");\nconsole.log("c");',
+            languageId: 'javascript',
+            assertion: (results: ReturnType<typeof findLogStatements>) => {
+                expect(results.length).toBeGreaterThanOrEqual(2);
+            },
+        },
+        {
+            name: 'handles typescriptreact files',
+            text: 'console.log("test");',
+            languageId: 'typescriptreact',
+            assertion: (results: ReturnType<typeof findLogStatements>) => {
+                expect(results.length).toBeGreaterThan(0);
+            },
+        },
+        {
+            name: 'handles javascriptreact files',
+            text: 'console.log("test");',
+            languageId: 'javascriptreact',
+            assertion: (results: ReturnType<typeof findLogStatements>) => {
+                expect(results.length).toBeGreaterThan(0);
+            },
+        },
+        {
+            name: 'handles spaces before opening parenthesis',
+            text: 'console.log      ("test");',
+            languageId: 'javascriptreact',
+            assertion: (results: ReturnType<typeof findLogStatements>) => {
+                expect(results.length).toBeGreaterThan(0);
+            },
+        },
+        {
+            name: 'handles nested function calls inside log',
+            text: 'console.log(JSON.stringify({name: "John"}));',
+            languageId: 'javascriptreact',
+            assertion: (results: ReturnType<typeof findLogStatements>) => {
+                expect(results.length).toBeGreaterThan(0);
+            },
+        },
+        {
+            name: 'returns empty array when no logs found',
+            text: 'const x = 5;\nconst y = 10;',
+            languageId: 'typescript',
+            assertion: (results: ReturnType<typeof findLogStatements>) => {
+                expect(results.length).toBe(0);
+            },
+        },
+        {
+            name: 'returns empty array when no opening parenthesis',
+            text: 'const x = 5;\nconsole.log{x);',
+            languageId: 'typescript',
+            assertion: (results: ReturnType<typeof findLogStatements>) => {
+                expect(results.length).toBe(0);
+            },
+        },
+        {
+            name: 'returns empty array when no closing parenthesis',
+            text: 'const x = 5;\nconsole.log(x};',
+            languageId: 'typescript',
+            assertion: (results: ReturnType<typeof findLogStatements>) => {
+                expect(results.length).toBe(0);
+            },
+        },
+        {
+            name: 'returns empty array for empty text',
+            text: '',
+            languageId: 'typescript',
+            assertion: (results: ReturnType<typeof findLogStatements>) => {
+                expect(results.length).toBe(0);
+            },
+        },
+    ])('$name', ({ text, languageId, assertion }) => {
+        const editor = createMockEditor(text, languageId);
+        const results = findLogStatements(editor);
+        assertion(results);
+    });
+});
 
-            const results = findLogStatements(editor);
+describe('findMatchesWithPattern', () => {
+    it.each([
+        {
+            name: 'finds matches with a simple pattern',
+            text: 'console.log("test");\nconsole.log("another");',
+            pattern: 'console.log',
+            languageId: 'typescript',
+            assertion: (results: ReturnType<typeof findMatchesWithPattern>) => {
+                expect(results.length).toBe(2);
+                expect(results[0]?.range).toBeDefined();
+            },
+        },
+        {
+            name: 'returns empty array when no matches found',
+            text: 'const x = 5;\nconst y = 10;',
+            pattern: 'console.log',
+            languageId: 'typescript',
+            assertion: (results: ReturnType<typeof findMatchesWithPattern>) => {
+                expect(results.length).toBe(0);
+            },
+        },
+        {
+            name: 'handles multiple matches on the same line',
+            text: 'console.log("a"); console.log("b");',
+            pattern: 'console.log',
+            languageId: 'typescript',
+            assertion: (results: ReturnType<typeof findMatchesWithPattern>) => {
+                expect(results.length).toBe(2);
+            },
+        },
+        {
+            name: 'correctly calculates positions for matches',
+            text: 'console.log("test");',
+            pattern: 'console.log',
+            languageId: 'typescript',
+            assertion: (results: ReturnType<typeof findMatchesWithPattern>) => {
+                expect(results.length).toBe(1);
+                expect(results[0]?.range.start.line).toBe(0);
+                expect(results[0]?.range.start.character).toBe(0);
+            },
+        },
+        {
+            name: 'handles empty text',
+            text: '',
+            pattern: 'console.log',
+            languageId: 'typescript',
+            assertion: (results: ReturnType<typeof findMatchesWithPattern>) => {
+                expect(results.length).toBe(0);
+            },
+        },
+    ])('$name', ({ text, pattern, languageId, assertion }) => {
+        const editor = createMockEditor(text, languageId);
+        const results = findMatchesWithPattern(text, pattern, editor);
+        assertion(results);
+    });
+});
 
-            expect(results.length).toBeGreaterThanOrEqual(2);
-        });
-
-        it('should find console.log in TypeScript', () => {
-            const text = 'const x = 5;\nconsole.log(x);\nconst y = 10;';
-            const editor = createMockEditor(text, 'typescript');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThan(0);
-            expect(results[0]?.range).toBeDefined();
-        });
-
-        it('should find multiple log statements in JavaScript', () => {
-            const text = 'console.log("a");\nconsole.error("b");\nconsole.log("c");';
-            const editor = createMockEditor(text, 'javascript');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThanOrEqual(2);
-        });
-
-        it('should handle TypeScript React files', () => {
-            const text = 'console.log("test");';
-            const editor = createMockEditor(text, 'typescriptreact');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThan(0);
-        });
-
-        it('should handle JavaScript React files', () => {
-            const text = 'console.log("test");';
-            const editor = createMockEditor(text, 'javascriptreact');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThan(0);
-        });
-
-        it('should handle logs with spaces before opening parenthesis', () => {
-            const text = 'console.log      ("test");';
-            const editor = createMockEditor(text, 'javascriptreact');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThan(0);
-        });
-
-        it('should handle logs with multiples functions calls inside it', () => {
-            const text = 'console.log(JSON.stringify({name: "John"}));';
-            const editor = createMockEditor(text, 'javascriptreact');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBeGreaterThan(0);
-        });
-
-        it('should return empty array when no logs found', () => {
-            const text = 'const x = 5;\nconst y = 10;';
-            const editor = createMockEditor(text, 'typescript');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBe(0);
-        });
-
-        it('should return empty array when logs found but no opening parenthesis', () => {
-            const text = 'const x = 5;\nconsole.log{x);';
-            const editor = createMockEditor(text, 'typescript');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBe(0);
-        });
-
-        it('should return empty array when logs found but no closing parenthesis', () => {
-            const text = 'const x = 5;\nconsole.log(x};';
-            const editor = createMockEditor(text, 'typescript');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBe(0);
-        });
-
-        it('should return only general patterns for unknown languages', () => {
-            const unknownPatterns = getLogPatterns('unknownlang');
-            const generalPatterns = getLogPatterns('general');
-
-            expect(generalPatterns.length).toBe(unknownPatterns.length);
-            expect(generalPatterns).toEqual(unknownPatterns);
-        });
-
-        it('should include custom patterns for the given language', () => {
-            const mockedGetAllCustomPatterns = vi.mocked(getAllCustomPatterns);
-
-            mockedGetAllCustomPatterns.mockReturnValue([
-                {
-                    language: 'typescript',
-                    name: 'My Custom Log',
-                    pattern: 'myCustomLog\\$',
-                },
-            ]);
-
-            const patterns = getLogPatterns('typescript');
-
-            const hasCustomPattern = patterns.some(pattern => pattern === 'myCustomLog\\$');
-
-            expect(hasCustomPattern).toBe(true);
-        });
-
-        it('should handle empty text', () => {
-            const text = '';
-            const editor = createMockEditor(text, 'typescript');
-
-            const results = findLogStatements(editor);
-
-            expect(results.length).toBe(0);
-        });
+describe('getLogPatterns', () => {
+    it.each([
+        {
+            name: 'returns patterns for typescript',
+            language: 'typescript',
+            assertion: (patterns: string[]) => {
+                expect(patterns.length).toBeGreaterThan(0);
+                expect(Array.isArray(patterns)).toBe(true);
+            },
+        },
+        {
+            name: 'returns patterns for javascript',
+            language: 'javascript',
+            assertion: (patterns: string[]) => {
+                expect(patterns.length).toBeGreaterThan(0);
+                expect(Array.isArray(patterns)).toBe(true);
+            },
+        },
+        {
+            name: 'maps javascriptreact to javascript patterns',
+            language: 'javascriptreact',
+            assertion: (patterns: string[]) => {
+                const jsPatterns = getLogPatterns('javascript');
+                expect(patterns.length).toBe(jsPatterns.length);
+            },
+        },
+        {
+            name: 'returns patterns for go',
+            language: 'go',
+            assertion: (patterns: string[]) => {
+                expect(patterns.length).toBeGreaterThan(0);
+                expect(Array.isArray(patterns)).toBe(true);
+            },
+        },
+        {
+            name: 'returns general patterns for unknown languages',
+            language: 'unknownlang',
+            assertion: (patterns: string[]) => {
+                const generalPatterns = getLogPatterns('general');
+                expect(patterns).toEqual(generalPatterns);
+            },
+        },
+        {
+            name: 'includes general patterns for all languages (more than 2)',
+            language: 'typescript',
+            assertion: (patterns: string[]) => {
+                expect(patterns.length).toBeGreaterThan(2);
+            },
+        },
+        {
+            name: 'returns a string array',
+            language: 'typescript',
+            assertion: (patterns: string[]) => {
+                patterns.forEach(pattern => {
+                    expect(typeof pattern).toBe('string');
+                });
+            },
+        },
+        {
+            name: 'returns patterns for cpp',
+            language: 'cpp',
+            assertion: (patterns: string[]) => {
+                expect(patterns.length).toBeGreaterThan(0);
+                expect(Array.isArray(patterns)).toBe(true);
+            },
+        },
+    ])('$name', ({ language, assertion }) => {
+        const patterns = getLogPatterns(language);
+        assertion(patterns);
     });
 
-    describe('findMatchesWithPattern', () => {
-        it('should find matches with a simple pattern pattern', () => {
-            const text = 'console.log("test");\nconsole.log("another");';
-            const pattern = 'console.log';
-            const editor = createMockEditor(text, 'typescript');
-
-            const results = findMatchesWithPattern(text, pattern, editor);
-
-            expect(results.length).toBe(2);
-            expect(results[0]?.range).toBeDefined();
-        });
-
-        it('should return empty array when no matches found', () => {
-            const text = 'const x = 5;\nconst y = 10;';
-            const pattern = 'console.log';
-            const editor = createMockEditor(text, 'typescript');
-
-            const results = findMatchesWithPattern(text, pattern, editor);
-
-            expect(results.length).toBe(0);
-        });
-
-        it('should handle multiple matches on same line', () => {
-            const text = 'console.log("a"); console.log("b");';
-            const pattern = 'console.log';
-            const editor = createMockEditor(text, 'typescript');
-
-            const results = findMatchesWithPattern(text, pattern, editor);
-
-            expect(results.length).toBe(2);
-        });
-
-        it('should correctly calculate positions for matches', () => {
-            const text = 'console.log("test");';
-            const pattern = 'console.log';
-            const editor = createMockEditor(text, 'typescript');
-
-            const results = findMatchesWithPattern(text, pattern, editor);
-
-            expect(results.length).toBe(1);
-            expect(results[0]?.range.start.line).toBe(0);
-            expect(results[0]?.range.start.character).toBe(0);
-        });
-
-        it('should handle empty text', () => {
-            const text = '';
-            const pattern = 'console.log';
-            const editor = createMockEditor(text, 'typescript');
-
-            const results = findMatchesWithPattern(text, pattern, editor);
-
-            expect(results.length).toBe(0);
-        });
+    it('includes custom patterns for the given language', () => {
+        vi.mocked(getAllCustomPatterns).mockReturnValue([
+            { language: 'typescript', name: 'My Custom Log', pattern: 'myCustomLog\\$' },
+        ]);
+        const patterns = getLogPatterns('typescript');
+        expect(patterns.some(p => p === 'myCustomLog\\$')).toBe(true);
     });
 
-    describe('getLogPatterns', () => {
-        it('should return typescript patterns for typescript language', () => {
-            const patterns = getLogPatterns('typescript');
+    it('does not include custom patterns for different languages', () => {
+        vi.mocked(getAllCustomPatterns).mockReturnValue([
+            { language: 'javascript', name: 'JS Custom Log', pattern: 'jsCustomLog\\$' },
+        ]);
+        const patterns = getLogPatterns('typescript');
+        expect(patterns.some(p => p === 'jsCustomLog\\$')).toBe(false);
+    });
 
-            expect(patterns.length).toBeGreaterThan(0);
-            expect(Array.isArray(patterns)).toBe(true);
-        });
-
-        it('should return javascript patterns for javascript language', () => {
-            const patterns = getLogPatterns('javascript');
-
-            expect(patterns.length).toBeGreaterThan(0);
-            expect(Array.isArray(patterns)).toBe(true);
-        });
-
-        it('should map javascriptreact to javascript patterns', () => {
-            const jsPatterns = getLogPatterns('javascript');
-            const jsxPatterns = getLogPatterns('javascriptreact');
-
-            expect(jsxPatterns.length).toBe(jsPatterns.length);
-        });
-
-        it('should return go patterns for go language', () => {
-            const patterns = getLogPatterns('go');
-
-            expect(patterns.length).toBeGreaterThan(0);
-            expect(Array.isArray(patterns)).toBe(true);
-        });
-
-        it('should return general patterns for unknown languages', () => {
-            const unknownPatterns = getLogPatterns('unknownlang');
-            const generalPatterns = getLogPatterns('general');
-
-            expect(unknownPatterns).toEqual(generalPatterns);
-        });
-
-        it('should include general patterns for all languages', () => {
-            const patterns = getLogPatterns('typescript');
-
-            expect(patterns.length).toBeGreaterThan(2);
-        });
-
-        it('should return string array', () => {
-            const patterns = getLogPatterns('typescript');
-
-            patterns.forEach(pattern => {
-                expect(typeof pattern).toBe('string');
-            });
-        });
-
-        it('should return cpp patterns for cpp language', () => {
-            const patterns = getLogPatterns('cpp');
-
-            expect(patterns.length).toBeGreaterThan(0);
-            expect(Array.isArray(patterns)).toBe(true);
-        });
-
-        it('should include custom patterns for the given language', () => {
-            const mockedGetAllCustomPatterns = vi.mocked(getAllCustomPatterns);
-
-            mockedGetAllCustomPatterns.mockReturnValue([
-                {
-                    language: 'typescript',
-                    name: 'My Custom Log',
-                    pattern: 'myCustomLog\\$',
-                },
-            ]);
-
-            const patterns = getLogPatterns('typescript');
-
-            const hasCustomPattern = patterns.some(pattern => pattern === 'myCustomLog\\$');
-
-            expect(hasCustomPattern).toBe(true);
-        });
-
-        it('should not include custom patterns for different languages', () => {
-            const mockedGetAllCustomPatterns = vi.mocked(getAllCustomPatterns);
-
-            mockedGetAllCustomPatterns.mockReturnValue([
-                {
-                    language: 'javascript',
-                    name: 'JS Custom Log',
-                    pattern: 'jsCustomLog\\$',
-                },
-            ]);
-
-            const patterns = getLogPatterns('typescript');
-
-            const hasCustomPattern = patterns.some(pattern => pattern === 'jsCustomLog\\$');
-
-            expect(hasCustomPattern).toBe(false);
-        });
+    it('returns only general patterns for unknown languages', () => {
+        const unknownPatterns = getLogPatterns('unknownlang');
+        const generalPatterns = getLogPatterns('general');
+        expect(generalPatterns.length).toBe(unknownPatterns.length);
+        expect(generalPatterns).toEqual(unknownPatterns);
     });
 });
