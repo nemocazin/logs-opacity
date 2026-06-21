@@ -4,7 +4,7 @@ import { getAllCustomPatterns } from '../config/configManager';
 import { findClosingParenthesis, findOpeningParenthesis } from './parser';
 
 /**
- * Finds log statements in the given text editor based on predefined patterns.
+ * @brief Finds log statements in the given text editor based on predefined patterns.
  *
  * @param editor The text editor to search for log statements.
  * @returns An array of decoration options representing the ranges of log statements.
@@ -26,7 +26,7 @@ export function findLogStatements(editor: vscode.TextEditor): vscode.DecorationO
 }
 
 /**
- * Finds all matches of a string pattern in the given text and returns their ranges.
+ * @brief Finds all matches of a string pattern in the given text and returns their ranges.
  *
  * @param text The text to search in.
  * @param pattern The string pattern to search for.
@@ -84,7 +84,7 @@ function createRange(editor: vscode.TextEditor, startIndex: number, endIndex: nu
 }
 
 /**
- * Retrieves log patterns based on the language ID.
+ * @brief Retrieves log patterns based on the language ID.
  *
  * @param languageId The language ID of the document.
  * @returns An array of patterns for the specified language.
