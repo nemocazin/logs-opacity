@@ -17,7 +17,6 @@ vi.mock('../../config/configManager');
 vi.mock('../../core/decoration');
 
 describe('deleteCustomPatternCommand', () => {
-    let getToggleFromConfigMock: ReturnType<typeof vi.fn>;
     let getAllCustomPatternsMock: ReturnType<typeof vi.fn>;
     let deleteCustomPatternMock: ReturnType<typeof vi.fn>;
     let recreateDecorationMock: ReturnType<typeof vi.fn>;
@@ -27,14 +26,12 @@ describe('deleteCustomPatternCommand', () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
-        getToggleFromConfigMock = vi.mocked(configManager.getToggleFromConfig);
         getAllCustomPatternsMock = vi.mocked(configManager.getAllCustomPatterns);
         deleteCustomPatternMock = vi.mocked(configManager.deleteCustomPattern);
         recreateDecorationMock = vi.mocked(decoration.recreateDecoration);
         showQuickPickMock = vi.mocked(vscode.window.showQuickPick);
         showInformationMessageMock = vi.mocked(vscode.window.showInformationMessage);
 
-        getToggleFromConfigMock.mockReturnValue(true);
         getAllCustomPatternsMock.mockReturnValue([
             { name: 'myPattern', pattern: 'console\\.log', language: 'javascript' },
             { name: 'goLog', pattern: 'fmt\\.Println', language: 'go' },
@@ -70,19 +67,6 @@ describe('deleteCustomPatternCommand', () => {
             await handleDeleteCustomPatternCommand();
 
             expect(showInformationMessageMock).toHaveBeenCalledWith('Custom pattern "myPattern" deleted.');
-        });
-
-        it('should return if extension is toggled off', async () => {
-            getToggleFromConfigMock.mockReturnValue(false);
-
-            await handleDeleteCustomPatternCommand();
-
-            expect(showInformationMessageMock).toHaveBeenCalledWith(
-                'Please toggle on the extension before deleting a custom pattern.',
-            );
-            expect(getAllCustomPatternsMock).not.toHaveBeenCalled();
-            expect(deleteCustomPatternMock).not.toHaveBeenCalled();
-            expect(recreateDecorationMock).not.toHaveBeenCalled();
         });
 
         it('should show message when no custom patterns exist', async () => {

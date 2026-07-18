@@ -25,7 +25,6 @@ export function registerEventListeners(context: vscode.ExtensionContext): void {
             if (
                 e.affectsConfiguration('unobtrusive-logs.opacity') ||
                 e.affectsConfiguration('unobtrusive-logs.color') ||
-                e.affectsConfiguration('unobtrusive-logs.toggle') ||
                 e.affectsConfiguration('unobtrusive-logs.addCustomRegex') ||
                 e.affectsConfiguration('unobtrusive-logs.deleteCustomRegex')
             ) {

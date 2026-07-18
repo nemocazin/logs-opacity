@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import { handleChangeOpacityCommand } from './changeOpacityCommand';
 import { handleChangeColorCommand } from './changeColorCommand';
-import { handleToggleCommand } from './toggleCommand';
 import { handleAddCustomPatternCommand } from './addPatternCommand';
 import { handleDeleteCustomPatternCommand } from './deletePatternCommands';
 
@@ -11,8 +10,6 @@ import { handleDeleteCustomPatternCommand } from './deletePatternCommands';
  * @param context The extension context to register commands in.
  */
 export function registerCommands(context: vscode.ExtensionContext): void {
-    const toggleCommand = vscode.commands.registerCommand('unobtrusive-logs.toggle', handleToggleCommand);
-
     const changeOpacityCommand = vscode.commands.registerCommand(
         'unobtrusive-logs.changeOpacity',
         handleChangeOpacityCommand,
@@ -33,7 +30,6 @@ export function registerCommands(context: vscode.ExtensionContext): void {
         handleDeleteCustomPatternCommand,
     );
 
-    context.subscriptions.push(toggleCommand);
     context.subscriptions.push(changeOpacityCommand);
     context.subscriptions.push(changeColorCommand);
     context.subscriptions.push(addCustomPatternCommand);

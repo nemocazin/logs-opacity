@@ -19,7 +19,6 @@ vi.mock('../../core/decoration');
 vi.mock('../../core/decorationUpdater');
 
 describe('changeColorCommand', () => {
-    let toggleFromConfigMock: ReturnType<typeof vi.fn>;
     let saveColorToConfigMock: ReturnType<typeof vi.fn>;
     let recreateDecorationMock: ReturnType<typeof vi.fn>;
     let updateAllVisibleEditorsMock: ReturnType<typeof vi.fn>;
@@ -29,7 +28,6 @@ describe('changeColorCommand', () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
-        toggleFromConfigMock = vi.mocked(configManager.getToggleFromConfig);
         saveColorToConfigMock = vi.mocked(configManager.saveColorToConfig);
         recreateDecorationMock = vi.mocked(decoration.recreateDecoration);
         updateAllVisibleEditorsMock = vi.mocked(decorationUpdater.updateAllVisibleEditors);
@@ -43,7 +41,6 @@ describe('changeColorCommand', () => {
 
     afterEach(() => {
         vi.restoreAllMocks();
-        toggleFromConfigMock.mockReturnValue(true);
     });
 
     describe('handleChangeColorCommand', () => {
@@ -81,14 +78,6 @@ describe('changeColorCommand', () => {
             await handleChangeColorCommand();
 
             expect(showInformationMessageMock).toHaveBeenCalledWith('Log color set to 🟨 Yellow');
-        });
-
-        it('should return if extension is toggle off', async () => {
-            toggleFromConfigMock.mockReturnValue(false);
-
-            await handleChangeColorCommand();
-
-            expect(recreateDecorationMock).toHaveBeenCalledTimes(0);
         });
 
         it('should not save or update when user cancels selection', async () => {

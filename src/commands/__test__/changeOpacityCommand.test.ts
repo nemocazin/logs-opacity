@@ -19,7 +19,6 @@ vi.mock('../../core/decoration');
 vi.mock('../../core/decorationUpdater');
 
 describe('changeOpacityCommand', () => {
-    let toggleFromConfigMock: ReturnType<typeof vi.fn>;
     let getOpacityFromConfigMock: ReturnType<typeof vi.fn>;
     let saveOpacityToConfigMock: ReturnType<typeof vi.fn>;
     let recreateDecorationMock: ReturnType<typeof vi.fn>;
@@ -30,7 +29,6 @@ describe('changeOpacityCommand', () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
-        toggleFromConfigMock = vi.mocked(configManager.getToggleFromConfig);
         getOpacityFromConfigMock = vi.mocked(configManager.getOpacityFromConfig);
         saveOpacityToConfigMock = vi.mocked(configManager.saveOpacityToConfig);
         recreateDecorationMock = vi.mocked(decoration.recreateDecoration);
@@ -46,7 +44,6 @@ describe('changeOpacityCommand', () => {
 
     afterEach(() => {
         vi.restoreAllMocks();
-        toggleFromConfigMock.mockReturnValue(true);
     });
 
     describe('validateOpacityInput', () => {
@@ -220,14 +217,6 @@ describe('changeOpacityCommand', () => {
             await handleChangeOpacityCommand();
 
             expect(saveOpacityToConfigMock).toHaveBeenCalledWith(80);
-        });
-
-        it('should return if extension is toggle off', async () => {
-            toggleFromConfigMock.mockReturnValue(false);
-
-            await handleChangeOpacityCommand();
-
-            expect(recreateDecorationMock).toHaveBeenCalledTimes(0);
         });
 
         it('should recreate decoration after saving new opacity', async () => {
