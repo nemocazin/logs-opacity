@@ -3,7 +3,6 @@ import * as vscode from 'vscode';
 import { createDecoration, disposeDecoration, recreateDecoration, logDecoration } from '../decoration';
 import * as configManager from '../../config/configManager';
 import * as converter from '../../utils/converter';
-import { updateAllVisibleEditors } from '../decorationUpdater';
 
 // Mock dependencies
 vi.mock('vscode', () => ({
@@ -14,9 +13,7 @@ vi.mock('vscode', () => ({
 
 vi.mock('../../config/configManager');
 vi.mock('../../utils/converter');
-vi.mock('../decorationUpdater', () => ({
-    updateAllVisibleEditors: vi.fn(),
-}));
+vi.mock('../decorationUpdater');
 
 describe('Decoration Manager Tests', () => {
     let mockDecoration: vscode.TextEditorDecorationType;
