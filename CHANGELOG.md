@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.4.1] - 2026-07-18
+
+### Changed
+
+- Removed the "Toggle Command" since Visual Studio Code already provides built-in enable/disable support for extensions.
+
 ## [1.4.0] - 2026-06-21
 
 ### Added
