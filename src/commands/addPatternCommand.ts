@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { getToggleFromConfig, saveCustomPattern } from '../config/configManager';
+import { saveCustomPattern } from '../config/configManager';
 import { recreateDecoration } from '../core/decoration';
 
 type Languages = {
@@ -19,11 +19,6 @@ const LANGUAGES: Languages[] = [
  * Handles the command to add a custom pattern.
  */
 export async function handleAddCustomPatternCommand(): Promise<void> {
-    if (getToggleFromConfig() === false) {
-        vscode.window.showInformationMessage('Please toggle on the extension before adding a custom pattern.');
-        return;
-    }
-
     // Get user input for language, name, and pattern
     const selectedLanguage = await promptForLanguage();
     const patternNameInput = await promptForName();

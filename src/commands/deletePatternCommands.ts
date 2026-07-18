@@ -1,16 +1,11 @@
 import * as vscode from 'vscode';
-import { deleteCustomPattern, getAllCustomPatterns, getToggleFromConfig } from '../config/configManager';
+import { deleteCustomPattern, getAllCustomPatterns } from '../config/configManager';
 import { recreateDecoration } from '../core/decoration';
 
 /**
  * Handles the command to delete a custom pattern.
  */
 export async function handleDeleteCustomPatternCommand(): Promise<void> {
-    if (getToggleFromConfig() === false) {
-        vscode.window.showInformationMessage('Please toggle on the extension before deleting a custom pattern.');
-        return;
-    }
-
     // Get the list of custom pattern names
     const patternsNamesList = getAllCustomPatterns().map(pattern => pattern.name);
     if (patternsNamesList.length === 0) {

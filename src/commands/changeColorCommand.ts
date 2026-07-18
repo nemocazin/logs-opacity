@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { getToggleFromConfig, saveColorToConfig } from '../config/configManager';
+import { saveColorToConfig } from '../config/configManager';
 import { recreateDecoration } from '../core/decoration';
 
 type ColorOption = {
@@ -45,11 +45,6 @@ const COLOR_OPTIONS: ColorOption[] = [
  * Handles the command to change the color of log statements.
  */
 export async function handleChangeColorCommand(): Promise<void> {
-    if (getToggleFromConfig() === false) {
-        vscode.window.showInformationMessage('Please toggle on the extension before changing color.');
-        return;
-    }
-
     const selectedColor = await promptForColor();
 
     if (selectedColor) {

@@ -18,7 +18,6 @@ vi.mock('../../config/configManager');
 vi.mock('../../core/decoration');
 
 describe('addCustomPatternCommand', () => {
-    let getToggleFromConfigMock: ReturnType<typeof vi.fn>;
     let saveCustomPatternMock: ReturnType<typeof vi.fn>;
     let recreateDecorationMock: ReturnType<typeof vi.fn>;
     let showQuickPickMock: ReturnType<typeof vi.fn>;
@@ -28,14 +27,12 @@ describe('addCustomPatternCommand', () => {
     beforeEach(() => {
         vi.clearAllMocks();
 
-        getToggleFromConfigMock = vi.mocked(configManager.getToggleFromConfig);
         saveCustomPatternMock = vi.mocked(configManager.saveCustomPattern);
         recreateDecorationMock = vi.mocked(decoration.recreateDecoration);
         showQuickPickMock = vi.mocked(vscode.window.showQuickPick);
         showInputBoxMock = vi.mocked(vscode.window.showInputBox);
         showInformationMessageMock = vi.mocked(vscode.window.showInformationMessage);
 
-        getToggleFromConfigMock.mockReturnValue(true);
         saveCustomPatternMock.mockResolvedValue(undefined);
         recreateDecorationMock.mockImplementation(() => {});
     });
@@ -82,18 +79,6 @@ describe('addCustomPatternCommand', () => {
             await handleAddCustomPatternCommand();
 
             expect(showInformationMessageMock).toHaveBeenCalledWith('Custom pattern "tsLog" added for typescript.');
-        });
-
-        it('should return if extension is toggled off', async () => {
-            getToggleFromConfigMock.mockReturnValue(false);
-
-            await handleAddCustomPatternCommand();
-
-            expect(showInformationMessageMock).toHaveBeenCalledWith(
-                'Please toggle on the extension before adding a custom pattern.',
-            );
-            expect(saveCustomPatternMock).not.toHaveBeenCalled();
-            expect(recreateDecorationMock).not.toHaveBeenCalled();
         });
 
         it('should not save when user cancels language selection', async () => {

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { getOpacityFromConfig, getColorFromConfig, getToggleFromConfig } from '../config/configManager';
+import { getOpacityFromConfig, getColorFromConfig } from '../config/configManager';
 import { convertOpacityToHex } from '../utils/converter';
 import { updateAllVisibleEditors } from './decorationUpdater';
 
@@ -10,12 +10,6 @@ export let logDecoration: vscode.TextEditorDecorationType;
  */
 export function recreateDecoration(): void {
     disposeDecoration();
-
-    // Validate conditions for creating decoration. If not met, create a default decoration with no styling.
-    if (!checkDecorationConditions()) {
-        return;
-    }
-
     createDecoration();
     updateAllVisibleEditors();
 }
@@ -50,18 +44,4 @@ export function createDecoration(): void {
             fontStyle: 'italic',
         });
     }
-}
-
-/**
- * Checks the conditions for creating the decoration.
- *
- * @returns False if the decoration should not be created, true otherwise.
- */
-export function checkDecorationConditions(): boolean {
-    if (getToggleFromConfig() === false) {
-        logDecoration = vscode.window.createTextEditorDecorationType({});
-        return false;
-    }
-
-    return true;
 }
